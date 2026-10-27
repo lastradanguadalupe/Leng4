@@ -1,0 +1,263 @@
+/* ==============================================================================
+   public/css/components.css
+   Componentes del Sistema de Diseño: Navbar, Modales, Tarjetas y Badges
+   ============================================================================== */
+
+/* Navbar Fija con Blur */
+.custom-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1030;
+  padding: 20px 0;
+  transition: all var(--transition-normal);
+  background: transparent;
+}
+
+.custom-navbar.navbar-scrolled {
+  padding: 12px 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.nav-link {
+  color: var(--color-text-muted) !important;
+  font-weight: 500;
+  font-size: var(--font-sm);
+  padding: 8px 16px !important;
+  transition: color var(--transition-fast);
+}
+
+.nav-link:hover, .nav-link.active {
+  color: #ffffff !important;
+}
+
+/* User Avatar & Dropdown */
+.user-avatar-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.custom-dropdown-glass {
+  background: rgba(12, 12, 14, 0.95) !important;
+  border: 1px solid var(--color-border-subtle) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+  border-radius: var(--border-radius-sm);
+}
+
+/* Badges */
+.badge-tech {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.badge-accent {
+  background: rgba(96, 73, 234, 0.18);
+  color: var(--color-accent-light);
+  border: 1px solid rgba(96, 73, 234, 0.4);
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Tarjetas de Proyectos */
+.project-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-normal);
+}
+
+.project-card:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(96, 73, 234, 0.18);
+}
+
+.project-thumb-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  overflow: hidden;
+  background: #0a0a0c;
+}
+
+.project-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.project-card:hover .project-thumb {
+  transform: scale(1.04);
+}
+
+.project-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: 2;
+}
+
+.project-card:hover .project-overlay {
+  opacity: 1;
+}
+
+.project-number {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.auth-gate-banner {
+  background: rgba(96, 73, 234, 0.08);
+  border: 1px solid rgba(96, 73, 234, 0.25);
+}
+
+/* Tarjetas de Servicios */
+.service-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-normal);
+}
+
+.service-card:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(96, 73, 234, 0.15);
+  transform: translateY(-4px);
+}
+
+.service-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background: rgba(96, 73, 234, 0.1);
+  border: 1px solid rgba(96, 73, 234, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Repositorios GitHub */
+.github-repo-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-normal);
+}
+
+.github-repo-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+}
+
+.lang-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Widget en Vivo del Visitante */
+.visitor-live-badge {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border-subtle);
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: var(--font-xs);
+  backdrop-filter: blur(10px);
+}
+
+/* Modal Accesible Personalizado */
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+  padding: 20px;
+}
+
+.custom-modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.custom-modal-container {
+  background: var(--color-surface-modal);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 32px;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), var(--shadow-glow);
+  transform: scale(0.95);
+  transition: transform var(--transition-normal);
+}
+
+.custom-modal-overlay.active .custom-modal-container {
+  transform: scale(1);
+}
+
+.custom-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.custom-modal-close:hover {
+  color: #ffffff;
+}

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alex Mercer | Fullstack Developer & Cloud Architect</title>
+  <meta name="description" content="Portfolio profesional de Desarrollador Fullstack. Arquitectura de sistemas distribuidos, bases de datos PostgreSQL, Supabase RLS y experiencias interactivas modernas.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236049ea'><circle cx='12' cy='12' r='10'/></svg>">
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Hojas de Estilos Propias -->
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+
+  <!-- Overlay Grain Sutil -->
+  <div class="grain-overlay"></div>
+
+  <!-- Preloader Inicial Fluido -->
+  <div id="site-preloader" class="site-preloader">
+    <div class="text-center">
+      <div class="section-tag mb-2">Iniciando Portfolio</div>
+      <div id="preloader-percent" class="preloader-counter text-accent-gradient">0%</div>
+      <div class="pulse-indicator mt-3"></div>
+    </div>
+  </div>
+
+  <!-- Barra de Navegación Fija con Blur -->
+  <header>
+    <nav class="custom-navbar navbar navbar-expand-lg">
+      <div class="container">
+        <a class="navbar-brand fw-bold text-white d-flex align-items-center gap-2" href="#">
+          <span style="color: var(--color-accent); font-size: 1.4rem;">✦</span>
+          <span>alex.mercer<span class="text-accent-gradient">_</span></span>
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="text-white" style="font-size: 1.5rem;">☰</span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarMain">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="#perfil">Perfil</a></li>
+            <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+            <li class="nav-item"><a class="nav-link" href="#experiencia">Experiencia</a></li>
+            <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos & Demos</a></li>
+            <li class="nav-item"><a class="nav-link" href="#github">GitHub</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+          </ul>
+          <!-- Contenedor dinámico de autenticación -->
+          <div id="nav-auth-container" class="d-flex align-items-center gap-2"></div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="hero-section" id="hero">
+      <div class="container text-center">
+        <!-- Live Visitor & Weather Widget -->
+        <div class="mb-4" id="visitor-live-widget">
+          <div class="visitor-live-badge d-inline-flex align-items-center gap-2">
+            <span class="pulse-indicator"></span>
+            <span>Detectando telemetría del visitante...</span>
+          </div>
+        </div>
+
+        <div class="hero-welcome-badge mb-2">Welcome to the web portfolio of</div>
+        <h1 class="hero-name">
+          Alex Mercer <span class="text-accent-gradient">Fullstack</span>
+        </h1>
+        <p class="hero-subtitle mx-auto">
+          Arquitectura de software de alto impacto · Supabase & PostgreSQL RLS · Experiencias Web a 60 FPS
+        </p>
+
+        <!-- CTA Buttons con Efecto Magnético y Glow Morado -->
+        <div class="hero-cta-group d-flex justify-content-center gap-3">
+          <a href="#contacto" class="btn btn-accent-custom btn-magnetic px-4 py-3">
+            <span>Contactame ↗</span>
+          </a>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline-custom btn-magnetic px-4 py-3">
+            <span>Explorar GitHub</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Marquesina Infinita con Logos y Tecnologías -->
+      <div class="hero-tech-marquee mt-auto pt-4">
+        <div class="marquee-container">
+          <div class="marquee-content">
+            <span class="badge-tech">Node.js</span>
+            <span class="badge-tech">React</span>
+            <span class="badge-tech">Next.js</span>
+            <span class="badge-tech">Supabase</span>
+            <span class="badge-tech">PostgreSQL RLS</span>
+            <span class="badge-tech">Vercel</span>
+            <span class="badge-tech">Bootstrap 5</span>
+            <span class="badge-tech">GSAP & ScrollTrigger</span>
+            <span class="badge-tech">Docker</span>
+            <span class="badge-tech">TypeScript</span>
+            <span class="badge-tech">REST & GraphQL</span>
+            <span class="badge-tech">Edge Functions</span>
+          </div>
+          <div class="marquee-content" aria-hidden="true">
+            <span class="badge-tech">Node.js</span>
+            <span class="badge-tech">React</span>
+            <span class="badge-tech">Next.js</span>
+            <span class="badge-tech">Supabase</span>
+            <span class="badge-tech">PostgreSQL RLS</span>
+            <span class="badge-tech">Vercel</span>
+            <span class="badge-tech">Bootstrap 5</span>
+            <span class="badge-tech">GSAP & ScrollTrigger</span>
+            <span class="badge-tech">Docker</span>
+            <span class="badge-tech">TypeScript</span>
+            <span class="badge-tech">REST & GraphQL</span>
+            <span class="badge-tech">Edge Functions</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN PERFIL & ESTADÍSTICAS -->
+    <section class="section-wrapper" id="perfil">
+      <div class="container">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6 section-header-reveal">
+            <span class="section-tag">Perfil Profesional</span>
+            <h2 class="fw-bold mb-4">Ingeniería fullstack enfocada en escala, seguridad y elegancia.</h2>
+            <p class="text-white-50 leading-relaxed mb-4">
+              Especializado en diseñar e implementar aplicaciones web modernas de principio a fin: desde el modelado relacional con políticas de seguridad a nivel de fila (RLS) en PostgreSQL, hasta interfaces de usuario reactivas con microinteracciones de máxima precisión estética.
+            </p>
+            <div class="d-flex gap-3 flex-wrap">
+              <button class="btn btn-outline-custom btn-sm" id="btn-copy-email" data-email="alex.mercer.dev@gmail.com">
+                📋 Copiar Email
+              </button>
+              <button class="btn btn-outline-custom btn-sm" id="btn-share-portfolio">
+                🔗 Compartir Portfolio
+              </button>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="row g-3">
+              <div class="col-6">
+                <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="5" data-suffix="+">0</div>
+                  <div class="text-white-50 small text-uppercase">Años de Experiencia</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="28" data-suffix="+">0</div>
+                  <div class="text-white-50 small text-uppercase">Proyectos Desplegados</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="99.9" data-decimals="1" data-suffix="%">0</div>
+                  <div class="text-white-50 small text-uppercase">Uptime & Confiabilidad</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="150" data-suffix="k+">0</div>
+                  <div class="text-white-50 small text-uppercase">Líneas de Código Testeadas</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN SERVICIOS -->
+    <section class="section-wrapper" id="servicios">
+      <div class="container">
+        <div class="section-header-reveal text-center mb-5">
+          <span class="section-tag">Servicios Profesionales</span>
+          <h2 class="fw-bold">Soluciones completas para productos digitales</h2>
+        </div>
+        <div class="row g-4 reveal-stagger-grid" id="servicios-grid">
+          <!-- Renderizado dinámico desde Supabase -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN EXPERIENCIA / TIMELINE -->
+    <section class="section-wrapper" id="experiencia">
+      <div class="container">
+        <div class="section-header-reveal text-center mb-5">
+          <span class="section-tag">Trayectoria</span>
+          <h2 class="fw-bold">Experiencia & Roles Clave</h2>
+        </div>
+        <div class="experience-timeline-container">
+          <div class="experience-timeline-line"></div>
+          
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content-card">
+              <span class="badge badge-accent mb-2">2024 - Presente</span>
+              <h4 class="fw-bold text-white mb-1">Senior Fullstack Architect</h4>
+              <p class="text-white-50 mb-0">Liderazgo técnico en plataformas SaaS multi-inquilino. Implementación de esquemas distribuidos con Supabase, Edge Functions y optimización de latencias globales.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content-card">
+              <span class="badge badge-accent mb-2">2022 - 2024</span>
+              <h4 class="fw-bold text-white mb-1">Frontend Engineer & Creative Developer</h4>
+              <p class="text-white-50 mb-0">Desarrollo de interfaces inmersivas con animaciones GSAP y WebGL para clientes internacionales en comercio electrónico y finanzas descentralizadas.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content-card">
+              <span class="badge badge-accent mb-2">2020 - 2022</span>
+              <h4 class="fw-bold text-white mb-1">Backend & Database Developer</h4>
+              <p class="text-white-50 mb-0">Construcción y modelado de APIs RESTful en Node.js, procedimientos almacenados y optimización de índices en bases de datos relacionales PostgreSQL.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN PROYECTOS Y DEMOS CON REGISTRACIÓN OBLIGATORIA -->
+    <section class="section-wrapper" id="proyectos">
+      <div class="container">
+        <div class="section-header-reveal text-center mb-5">
+          <span class="section-tag">Portafolio Seleccionado</span>
+          <h2 class="fw-bold">Proyectos & Demos Interactivas</h2>
+          <p class="text-white-50 mx-auto" style="max-width: 620px;">
+            Explora las soluciones desarrolladas. Las demostraciones interactivas y sandboxes en vivo requieren inicio de sesión o registro previo.
+          </p>
+        </div>
+        <div class="row g-4 reveal-stagger-grid" id="proyectos-grid">
+          <!-- Renderizado dinámico desde Supabase -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN GITHUB REPOS (WEB API) -->
+    <section class="section-wrapper" id="github">
+      <div class="container">
+        <div class="section-header-reveal text-center mb-5">
+          <span class="section-tag">Código Abierto</span>
+          <h2 class="fw-bold">Actividad Reciente en GitHub</h2>
+          <p class="text-white-50">Sincronizado en tiempo real a través de la GitHub REST API</p>
+        </div>
+        <div class="row g-4 reveal-stagger-grid" id="github-repos-container">
+          <!-- Renderizado desde GithubService -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN FORMULARIO DE CONTACTO -->
+    <section class="section-wrapper" id="contacto">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card p-4 p-md-5 section-header-reveal">
+              <div class="text-center mb-4">
+                <span class="section-tag">Hablemos</span>
+                <h2 class="fw-bold">Inicia una Consulta o Cotización</h2>
+                <p class="text-white-50">Las solicitudes se guardan directamente en la base y son atendidas por el operador.</p>
+              </div>
+
+              <form id="contact-form">
+                <!-- Honeypot invisible contra bots spam -->
+                <div style="display: none !important;" aria-hidden="true">
+                  <input type="text" name="honeypot" tabindex="-1" autocomplete="off">
+                </div>
+
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label small text-white-50" for="contacto-nombre">Tu Nombre Completo *</label>
+                    <input type="text" id="contacto-nombre" name="nombre" class="form-control" placeholder="Ej: Sofía Rodríguez" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label small text-white-50" for="contacto-email">Correo Electrónico *</label>
+                    <input type="email" id="contacto-email" name="email" class="form-control" placeholder="sofia@empresa.com" required>
+                  </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label small text-white-50" for="contacto-tipo">Tipo de Solicitud *</label>
+                    <select id="contacto-tipo" name="tipo" class="form-select" required>
+                      <option value="general">Consulta General</option>
+                      <option value="cotizacion">Cotización de Proyecto</option>
+                      <option value="asesoria">Asesoría Técnica / Auditoría</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label small text-white-50" for="contacto-asunto">Asunto *</label>
+                    <input type="text" id="contacto-asunto" name="asunto" class="form-control" placeholder="Resumen del requerimiento" required>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label small text-white-50" for="contacto-mensaje">Detalles del Mensaje *</label>
+                  <textarea id="contacto-mensaje" name="mensaje" rows="4" class="form-control" placeholder="Describe brevemente tus objetivos, plazos o especificaciones técnicas..." required></textarea>
+                </div>
+
+                <div class="text-center">
+                  <button type="submit" class="btn btn-accent-custom px-5 py-3 btn-magnetic">
+                    Enviar Mensaje Directo ↗
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="custom-footer text-center">
+    <div class="container">
+      <div class="d-flex justify-content-center gap-4 mb-3">
+        <a href="#hero" class="text-white-50 small">Inicio</a>
+        <a href="/manual.html" class="text-white-50 small">Manual de Marca</a>
+        <a href="/login.html" class="text-white-50 small">Acceso Usuarios</a>
+        <a href="https://github.com" target="_blank" class="text-white-50 small">GitHub</a>
+      </div>
+      <p class="text-white-50 small mb-0">
+        © 2026 Alex Mercer · Portfolio Desarrollador Fullstack · Trabajo Práctico Integrador Lenguajes 4
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts: Bootstrap 5, GSAP, Lenis Smooth Scroll -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/bundled/lenis.min.js"></script>
+
+  <!-- Módulo ES Principal de la Home -->
+  <script type="module" src="./js/pages/home.js"></script>
+</body>
+</html>

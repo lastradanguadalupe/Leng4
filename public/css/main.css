@@ -1,0 +1,177 @@
+/* ==============================================================================
+   public/css/main.css
+   Layout Global, Hero, Timeline de Experiencia y Responsividad
+   ============================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap');
+@import url('./variables.css');
+@import url('./bootstrap-custom.css');
+@import url('./animations.css');
+@import url('./components.css');
+
+/* Preloader Inicial */
+.site-preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.preloader-counter {
+  font-size: clamp(3rem, 10vw, 7rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+}
+
+/* Secciones Generales */
+.section-wrapper {
+  padding: var(--section-padding-y) 0;
+  position: relative;
+}
+
+.section-tag {
+  font-size: var(--font-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  color: var(--color-accent-light);
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* HERO SECTION */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 100px;
+  padding-bottom: 40px;
+  position: relative;
+}
+
+.hero-welcome-badge {
+  font-size: var(--font-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.hero-name {
+  font-size: var(--font-h1);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.hero-subtitle {
+  font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
+  max-width: 650px;
+}
+
+.hero-cta-group {
+  margin-top: 28px;
+  margin-bottom: 48px;
+}
+
+/* Timeline de Experiencia */
+.experience-timeline-container {
+  position: relative;
+  padding: 40px 0;
+}
+
+.experience-timeline-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 20px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 768px) {
+  .experience-timeline-line {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 48px;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: 11px;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #000000;
+  border: 2px solid var(--color-accent);
+  z-index: 3;
+}
+
+@media (min-width: 768px) {
+  .timeline-dot {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.timeline-content-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  padding: 24px;
+  margin-left: 50px;
+}
+
+@media (min-width: 768px) {
+  .timeline-item:nth-child(odd) .timeline-content-card {
+    margin-left: 0;
+    margin-right: calc(50% + 30px);
+    text-align: right;
+  }
+  .timeline-item:nth-child(even) .timeline-content-card {
+    margin-left: calc(50% + 30px);
+  }
+}
+
+/* Footer */
+.custom-footer {
+  border-top: 1px solid var(--color-border-subtle);
+  padding: 48px 0 24px;
+  background: #000000;
+}
+
+/* Adaptabilidad Responsive */
+@media (max-width: 576px) {
+  .hero-name {
+    font-size: 2.6rem;
+  }
+  .hero-cta-group {
+    flex-direction: column;
+    width: 100%;
+  }
+  .hero-cta-group .btn {
+    width: 100%;
+  }
+}

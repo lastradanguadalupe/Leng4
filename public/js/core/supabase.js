@@ -3,7 +3,11 @@
 // Inicialización del cliente Supabase en módulos ES puros (sin bundler)
 // ==============================================================================
 
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+// Versión fijada a propósito. Con `@2` el CDN sirve la última v2 publicada y
+// el sitio puede cambiar de comportamiento de un día para el otro sin que
+// nadie toque el código, justo antes de una exposición. 2.118.0 soporta las
+// claves nuevas `sb_publishable_...`.
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm";
 import { CONFIG } from "../config.js";
 
 // Permitir sobreescribir las credenciales desde localStorage para pruebas o evaluación docente

@@ -191,6 +191,241 @@
   display: inline-block;
 }
 
+/* ---------------- Campo de contraseña con ojo ---------------- */
+.campo-password {
+  position: relative;
+  display: block;
+}
+
+/* Espacio a la derecha para que el texto no pase por debajo del botón */
+.campo-password__input {
+  padding-right: 52px !important;
+}
+
+.campo-password__ojo {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  /* Área táctil de 44px aunque el icono sea chico */
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.campo-password__ojo svg {
+  width: 18px;
+  height: 18px;
+}
+
+.campo-password__ojo:hover {
+  color: var(--color-accent-light);
+  background: rgba(96, 73, 234, 0.1);
+}
+
+.campo-password__ojo:focus-visible {
+  outline: none;
+  color: var(--color-accent-light);
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.campo-password__ojo[aria-pressed="true"] {
+  color: var(--color-accent);
+}
+
+/* ---------------- Fortaleza de contraseña ---------------- */
+.fortaleza {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.fortaleza__barra {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.fortaleza__relleno {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--color-text-dim);
+  transition: width var(--transition-normal), background-color var(--transition-normal);
+}
+
+.fortaleza__relleno[data-nivel="debil"] { background: #c25b5b; }
+.fortaleza__relleno[data-nivel="media"] { background: #c9a227; }
+.fortaleza__relleno[data-nivel="buena"] { background: var(--color-accent-light); }
+.fortaleza__relleno[data-nivel="fuerte"] { background: #4fb286; }
+
+.fortaleza__etiqueta {
+  font-size: var(--font-xs);
+  font-weight: 600;
+  min-width: 48px;
+  text-align: right;
+  color: var(--color-text-dim);
+}
+
+.fortaleza__etiqueta[data-nivel="debil"] { color: #d98080; }
+.fortaleza__etiqueta[data-nivel="media"] { color: #d9bf5a; }
+.fortaleza__etiqueta[data-nivel="buena"] { color: var(--color-accent-light); }
+.fortaleza__etiqueta[data-nivel="fuerte"] { color: #6fcfa3; }
+
+.fortaleza__requisitos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 8px 0 0;
+  font-size: var(--font-xs);
+  color: var(--color-text-dim);
+}
+
+.fortaleza__requisitos li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color var(--transition-fast);
+}
+
+.fortaleza__requisitos li.cumple {
+  color: #6fcfa3;
+}
+
+.fortaleza__check {
+  font-size: 0.7em;
+  line-height: 1;
+}
+
+/* Mensaje de coincidencia de contraseñas */
+.mensaje-coincidencia {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--font-xs);
+  min-height: 1em;
+}
+
+.mensaje-coincidencia[data-estado="ok"] { color: #6fcfa3; }
+.mensaje-coincidencia[data-estado="error"] { color: #d98080; }
+
+/* ---------------- Estados de carga, error y vacío ---------------- */
+.skeleton-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.skeleton-linea {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.09) 37%,
+    rgba(255, 255, 255, 0.04) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-brillo 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-brillo {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-linea { animation: none; }
+}
+
+/* Estado de error / vacío: tono neutro, nunca rojo agresivo */
+.estado-vacio {
+  padding: 48px 24px;
+  background: var(--color-surface-1);
+  border: 1px dashed var(--color-border-subtle);
+  border-radius: var(--border-radius-md);
+}
+
+.estado-vacio__icono {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(96, 73, 234, 0.1);
+  border: 1px solid rgba(96, 73, 234, 0.3);
+  color: var(--color-accent-light);
+}
+
+.estado-vacio__texto {
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
+  margin-bottom: 18px;
+}
+
+.aviso-respaldo {
+  margin: 24px 0 0;
+  text-align: center;
+  font-size: var(--font-xs);
+  color: var(--color-text-dim);
+}
+
+/* Portada de respaldo cuando el proyecto no tiene imagen en Storage.
+   Va de fondo y la foto real se apoya encima: si la foto no existe, no tapa
+   nada y queda el respaldo a la vista. */
+.project-thumb--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(96, 73, 234, 0.35) 0%, rgba(96, 73, 234, 0) 60%),
+    linear-gradient(135deg, #0c0c10 0%, #15131f 100%);
+}
+
+.project-thumb--placeholder span {
+  font-size: 2.6rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.project-thumb--foto {
+  z-index: 1;
+}
+
+/* CTA animado del bloqueo de demos */
+.btn-cta-registro {
+  animation: cta-latido 2.6s ease-in-out infinite;
+}
+
+@keyframes cta-latido {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(96, 73, 234, 0); }
+  50% { box-shadow: 0 0 0 10px rgba(96, 73, 234, 0.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-cta-registro { animation: none; }
+}
+
 /* Widget en Vivo del Visitante */
 .visitor-live-badge {
   background: rgba(255, 255, 255, 0.03);

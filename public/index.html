@@ -1,15 +1,21 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-page-title="Portfolio de Desarrollo Fullstack">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alex Mercer | Fullstack Developer & Cloud Architect</title>
-  <meta name="description" content="Portfolio profesional de Desarrollador Fullstack. Arquitectura de sistemas distribuidos, bases de datos PostgreSQL, Supabase RLS y experiencias interactivas modernas.">
+  <title>Portfolio de Desarrollo Fullstack</title>
+  <meta name="description" content="Portfolio de desarrollo web fullstack: aplicaciones a medida, APIs, bases de datos PostgreSQL con Supabase y experiencias interactivas modernas. Trabajo Práctico Integrador de Lenguajes 4.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236049ea'><circle cx='12' cy='12' r='10'/></svg>">
-  
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Portfolio de Desarrollo Fullstack">
+  <meta property="og:description" content="Desarrollo web fullstack a medida: aplicaciones, APIs, bases de datos y experiencias interactivas.">
+  <meta property="og:locale" content="es_AR">
+
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  
+
   <!-- Hojas de Estilos Propias -->
   <link rel="stylesheet" href="./css/main.css">
 </head>
@@ -31,19 +37,21 @@
   <header>
     <nav class="custom-navbar navbar navbar-expand-lg">
       <div class="container">
-        <a class="navbar-brand fw-bold text-white d-flex align-items-center gap-2" href="#">
-          <span style="color: var(--color-accent); font-size: 1.4rem;">✦</span>
-          <span>alex.mercer<span class="text-accent-gradient">_</span></span>
+        <!-- Solo isotipo: el equipo todavía no definió el nombre de la marca.
+             Cuando lo defina, BRAND_NAME en js/core/brand.js muestra el texto. -->
+        <a class="navbar-brand fw-bold text-white d-flex align-items-center gap-2" href="#hero" aria-label="Inicio">
+          <span aria-hidden="true" style="color: var(--color-accent); font-size: 1.4rem; line-height: 1;">✦</span>
+          <span data-brand-name hidden></span>
         </a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="text-white" style="font-size: 1.5rem;">☰</span>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Abrir menú de navegación">
+          <span class="text-white" aria-hidden="true" style="font-size: 1.5rem;">☰</span>
         </button>
         <div class="collapse navbar-collapse" id="navbarMain">
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
             <li class="nav-item"><a class="nav-link" href="#perfil">Perfil</a></li>
             <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
             <li class="nav-item"><a class="nav-link" href="#experiencia">Experiencia</a></li>
-            <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos & Demos</a></li>
+            <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos &amp; Demos</a></li>
             <li class="nav-item"><a class="nav-link" href="#github">GitHub</a></li>
             <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
           </ul>
@@ -58,20 +66,12 @@
     <!-- HERO SECTION -->
     <section class="hero-section" id="hero">
       <div class="container text-center">
-        <!-- Live Visitor & Weather Widget -->
-        <div class="mb-4" id="visitor-live-widget">
-          <div class="visitor-live-badge d-inline-flex align-items-center gap-2">
-            <span class="pulse-indicator"></span>
-            <span>Detectando telemetría del visitante...</span>
-          </div>
-        </div>
-
-        <div class="hero-welcome-badge mb-2">Welcome to the web portfolio of</div>
+        <div class="hero-eyebrow mb-2">Portfolio de Desarrollo Fullstack</div>
         <h1 class="hero-name">
-          Alex Mercer <span class="text-accent-gradient">Fullstack</span>
+          Desarrollo <span class="text-accent-gradient">Fullstack</span>
         </h1>
         <p class="hero-subtitle mx-auto">
-          Arquitectura de software de alto impacto · Supabase & PostgreSQL RLS · Experiencias Web a 60 FPS
+          Arquitectura de software de alto impacto · Supabase &amp; PostgreSQL RLS · Experiencias Web a 60 FPS
         </p>
 
         <!-- CTA Buttons con Efecto Magnético y Glow Morado -->
@@ -83,38 +83,66 @@
             <span>Explorar GitHub</span>
           </a>
         </div>
+
+        <!-- Visual propio en CSS: ventana de código en glassmorphism.
+             Llena el espacio que antes quedaba vacío entre los botones y la
+             marquesina, y tiene parallax con el mouse (ver home.js). -->
+        <div class="hero-visual" id="hero-visual" aria-hidden="true">
+          <span class="hero-visual-chip hero-visual-chip--db">PostgreSQL</span>
+          <span class="hero-visual-chip hero-visual-chip--rls">RLS activo</span>
+
+          <div class="hero-code-window" id="hero-code-window">
+            <div class="hero-code-titlebar">
+              <span class="hero-code-dot"></span>
+              <span class="hero-code-dot"></span>
+              <span class="hero-code-dot"></span>
+              <span class="hero-code-filename">002_rls_policies.sql</span>
+            </div>
+<pre class="hero-code-body"><span class="c-com">-- Lectura pública solo de lo publicado</span>
+<span class="c-key">create policy</span> <span class="c-str">"lectura_publica"</span>
+  <span class="c-key">on</span> servicios <span class="c-key">for select</span>
+  <span class="c-key">using</span> ( activo = <span class="c-key">true</span> );
+<span class="linea-extra">
+<span class="c-com">// y del lado del cliente</span>
+<span class="c-key">const</span> { data } = <span class="c-key">await</span> supabase
+  .<span class="c-fn">from</span>(<span class="c-str">'servicios'</span>)
+  .<span class="c-fn">select</span>(<span class="c-str">'titulo, descripcion'</span>)
+  .<span class="c-fn">eq</span>(<span class="c-str">'activo'</span>, <span class="c-key">true</span>);</span><span class="hero-code-caret"></span></pre>
+          </div>
+        </div>
       </div>
 
-      <!-- Marquesina Infinita con Logos y Tecnologías -->
-      <div class="hero-tech-marquee mt-auto pt-4">
+      <!-- Marquesina Infinita con Logos y Tecnologías.
+           Sin `mt-auto`: ese margen automático generaba el hueco vacío. -->
+      <div class="hero-tech-marquee">
         <div class="marquee-container">
           <div class="marquee-content">
-            <span class="badge-tech">Node.js</span>
-            <span class="badge-tech">React</span>
-            <span class="badge-tech">Next.js</span>
-            <span class="badge-tech">Supabase</span>
-            <span class="badge-tech">PostgreSQL RLS</span>
-            <span class="badge-tech">Vercel</span>
-            <span class="badge-tech">Bootstrap 5</span>
-            <span class="badge-tech">GSAP & ScrollTrigger</span>
-            <span class="badge-tech">Docker</span>
-            <span class="badge-tech">TypeScript</span>
-            <span class="badge-tech">REST & GraphQL</span>
-            <span class="badge-tech">Edge Functions</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/nodedotjs" alt="" aria-hidden="true">Node.js</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/react" alt="" aria-hidden="true">React</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/nextdotjs" alt="" aria-hidden="true">Next.js</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/supabase" alt="" aria-hidden="true">Supabase</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/postgresql" alt="" aria-hidden="true">PostgreSQL</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/vercel" alt="" aria-hidden="true">Vercel</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/bootstrap" alt="" aria-hidden="true">Bootstrap 5</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/greensock" alt="" aria-hidden="true">GSAP</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/docker" alt="" aria-hidden="true">Docker</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/typescript" alt="" aria-hidden="true">TypeScript</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/graphql" alt="" aria-hidden="true">GraphQL</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/deno" alt="" aria-hidden="true">Edge Functions</span>
           </div>
           <div class="marquee-content" aria-hidden="true">
-            <span class="badge-tech">Node.js</span>
-            <span class="badge-tech">React</span>
-            <span class="badge-tech">Next.js</span>
-            <span class="badge-tech">Supabase</span>
-            <span class="badge-tech">PostgreSQL RLS</span>
-            <span class="badge-tech">Vercel</span>
-            <span class="badge-tech">Bootstrap 5</span>
-            <span class="badge-tech">GSAP & ScrollTrigger</span>
-            <span class="badge-tech">Docker</span>
-            <span class="badge-tech">TypeScript</span>
-            <span class="badge-tech">REST & GraphQL</span>
-            <span class="badge-tech">Edge Functions</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/nodedotjs" alt="" aria-hidden="true">Node.js</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/react" alt="" aria-hidden="true">React</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/nextdotjs" alt="" aria-hidden="true">Next.js</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/supabase" alt="" aria-hidden="true">Supabase</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/postgresql" alt="" aria-hidden="true">PostgreSQL</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/vercel" alt="" aria-hidden="true">Vercel</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/bootstrap" alt="" aria-hidden="true">Bootstrap 5</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/greensock" alt="" aria-hidden="true">GSAP</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/docker" alt="" aria-hidden="true">Docker</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/typescript" alt="" aria-hidden="true">TypeScript</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/graphql" alt="" aria-hidden="true">GraphQL</span>
+            <span class="tech-pill"><img src="https://cdn.simpleicons.org/deno" alt="" aria-hidden="true">Edge Functions</span>
           </div>
         </div>
       </div>
@@ -128,10 +156,10 @@
             <span class="section-tag">Perfil Profesional</span>
             <h2 class="fw-bold mb-4">Ingeniería fullstack enfocada en escala, seguridad y elegancia.</h2>
             <p class="text-white-50 leading-relaxed mb-4">
-              Especializado en diseñar e implementar aplicaciones web modernas de principio a fin: desde el modelado relacional con políticas de seguridad a nivel de fila (RLS) en PostgreSQL, hasta interfaces de usuario reactivas con microinteracciones de máxima precisión estética.
+              Diseñamos e implementamos aplicaciones web modernas de principio a fin: desde el modelado relacional con políticas de seguridad a nivel de fila (RLS) en PostgreSQL, hasta interfaces de usuario reactivas con microinteracciones de máxima precisión estética.
             </p>
             <div class="d-flex gap-3 flex-wrap">
-              <button class="btn btn-outline-custom btn-sm" id="btn-copy-email" data-email="alex.mercer.dev@gmail.com">
+              <button class="btn btn-outline-custom btn-sm" id="btn-copy-email" data-email="contacto@portfolio.dev">
                 📋 Copiar Email
               </button>
               <button class="btn btn-outline-custom btn-sm" id="btn-share-portfolio">
@@ -156,7 +184,7 @@
               <div class="col-6">
                 <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
                   <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="99.9" data-decimals="1" data-suffix="%">0</div>
-                  <div class="text-white-50 small text-uppercase">Uptime & Confiabilidad</div>
+                  <div class="text-white-50 small text-uppercase">Uptime &amp; Confiabilidad</div>
                 </div>
               </div>
               <div class="col-6">
@@ -189,11 +217,11 @@
       <div class="container">
         <div class="section-header-reveal text-center mb-5">
           <span class="section-tag">Trayectoria</span>
-          <h2 class="fw-bold">Experiencia & Roles Clave</h2>
+          <h2 class="fw-bold">Experiencia &amp; Roles Clave</h2>
         </div>
         <div class="experience-timeline-container">
           <div class="experience-timeline-line"></div>
-          
+
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="timeline-content-card">
@@ -207,7 +235,7 @@
             <div class="timeline-dot"></div>
             <div class="timeline-content-card">
               <span class="badge badge-accent mb-2">2022 - 2024</span>
-              <h4 class="fw-bold text-white mb-1">Frontend Engineer & Creative Developer</h4>
+              <h4 class="fw-bold text-white mb-1">Frontend Engineer &amp; Creative Developer</h4>
               <p class="text-white-50 mb-0">Desarrollo de interfaces inmersivas con animaciones GSAP y WebGL para clientes internacionales en comercio electrónico y finanzas descentralizadas.</p>
             </div>
           </div>
@@ -216,7 +244,7 @@
             <div class="timeline-dot"></div>
             <div class="timeline-content-card">
               <span class="badge badge-accent mb-2">2020 - 2022</span>
-              <h4 class="fw-bold text-white mb-1">Backend & Database Developer</h4>
+              <h4 class="fw-bold text-white mb-1">Backend &amp; Database Developer</h4>
               <p class="text-white-50 mb-0">Construcción y modelado de APIs RESTful en Node.js, procedimientos almacenados y optimización de índices en bases de datos relacionales PostgreSQL.</p>
             </div>
           </div>
@@ -229,9 +257,9 @@
       <div class="container">
         <div class="section-header-reveal text-center mb-5">
           <span class="section-tag">Portafolio Seleccionado</span>
-          <h2 class="fw-bold">Proyectos & Demos Interactivas</h2>
+          <h2 class="fw-bold">Proyectos &amp; Demos Interactivas</h2>
           <p class="text-white-50 mx-auto" style="max-width: 620px;">
-            Explora las soluciones desarrolladas. Las demostraciones interactivas y sandboxes en vivo requieren inicio de sesión o registro previo.
+            Explorá las soluciones desarrolladas. Las demostraciones interactivas y sandboxes en vivo requieren inicio de sesión o registro previo.
           </p>
         </div>
         <div class="row g-4 reveal-stagger-grid" id="proyectos-grid">
@@ -262,7 +290,7 @@
             <div class="card p-4 p-md-5 section-header-reveal">
               <div class="text-center mb-4">
                 <span class="section-tag">Hablemos</span>
-                <h2 class="fw-bold">Inicia una Consulta o Cotización</h2>
+                <h2 class="fw-bold">Iniciá una Consulta o Cotización</h2>
                 <p class="text-white-50">Las solicitudes se guardan directamente en la base y son atendidas por el operador.</p>
               </div>
 
@@ -300,7 +328,7 @@
 
                 <div class="mb-4">
                   <label class="form-label small text-white-50" for="contacto-mensaje">Detalles del Mensaje *</label>
-                  <textarea id="contacto-mensaje" name="mensaje" rows="4" class="form-control" placeholder="Describe brevemente tus objetivos, plazos o especificaciones técnicas..." required></textarea>
+                  <textarea id="contacto-mensaje" name="mensaje" rows="4" class="form-control" placeholder="Describí brevemente tus objetivos, plazos o especificaciones técnicas..." required></textarea>
                 </div>
 
                 <div class="text-center">
@@ -317,25 +345,103 @@
   </main>
 
   <!-- PIE DE PÁGINA -->
-  <footer class="custom-footer text-center">
+  <footer class="custom-footer">
     <div class="container">
-      <div class="d-flex justify-content-center gap-4 mb-3">
-        <a href="#hero" class="text-white-50 small">Inicio</a>
-        <a href="/manual.html" class="text-white-50 small">Manual de Marca</a>
-        <a href="/login.html" class="text-white-50 small">Acceso Usuarios</a>
-        <a href="https://github.com" target="_blank" class="text-white-50 small">GitHub</a>
+      <div class="footer-grid">
+
+        <!-- Columna marca -->
+        <div class="footer-col footer-col--marca">
+          <a class="footer-isotipo" href="#hero" aria-label="Inicio">
+            <span aria-hidden="true">✦</span>
+            <span data-brand-name hidden></span>
+          </a>
+          <p class="footer-tagline" data-brand-tagline>Desarrollo web fullstack a medida</p>
+
+          <div class="footer-socials">
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="GitHub">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.07-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A7.995 7.995 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a href="mailto:contacto@portfolio.dev" class="footer-social-link" aria-label="Enviar un email">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 4h21A1.5 1.5 0 0 1 24 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-21A1.5 1.5 0 0 1 0 18.5v-13A1.5 1.5 0 0 1 1.5 4Zm.5 2.2V7l10 6.2L22 7v-.8H2Zm20 3.1-9.47 5.87a1 1 0 0 1-1.06 0L2 9.3v8.5h20V9.3Z"/></svg>
+            </a>
+          </div>
+
+          <!-- Widget en vivo (IP Geolocation + Open-Meteo). Se movió del hero
+               para no competir con el título, pero se conserva porque son
+               Web APIs evaluadas por la cátedra. -->
+          <div class="footer-live-widget" id="visitor-live-widget"></div>
+        </div>
+
+        <!-- Navegación -->
+        <div class="footer-col">
+          <h3 class="footer-heading">Navegación</h3>
+          <ul class="footer-links">
+            <li><a href="#hero">Inicio</a></li>
+            <li><a href="#perfil">Perfil</a></li>
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#experiencia">Experiencia</a></li>
+            <li><a href="#proyectos">Proyectos &amp; Demos</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+          </ul>
+        </div>
+
+        <!-- Cuenta y recursos -->
+        <div class="footer-col">
+          <h3 class="footer-heading">Cuenta y recursos</h3>
+          <ul class="footer-links">
+            <li><a href="/login.html">Acceder</a></li>
+            <li><a href="/login.html#registro">Registrarse</a></li>
+            <li><a href="/manual.html">Manual de marca</a></li>
+            <li><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal -->
+        <div class="footer-col">
+          <h3 class="footer-heading">Legal</h3>
+          <ul class="footer-links">
+            <li><a href="/terminos.html">Términos y condiciones</a></li>
+            <li><a href="/privacidad.html">Política de privacidad</a></li>
+            <li><a href="/cookies.html">Política de cookies</a></li>
+          </ul>
+        </div>
       </div>
-      <p class="text-white-50 small mb-0">
-        © 2026 Alex Mercer · Portfolio Desarrollador Fullstack · Trabajo Práctico Integrador Lenguajes 4
-      </p>
+
+      <div class="footer-bottom">
+        <p class="footer-legal-line" data-brand-legal>
+          © 2026 · Portfolio Desarrollador Fullstack · Trabajo Práctico Integrador Lenguajes 4
+        </p>
+        <button type="button" class="btn-back-to-top" id="btn-back-to-top">
+          <span class="flecha" aria-hidden="true">↑</span>
+          <span>Volver arriba</span>
+        </button>
+      </div>
     </div>
   </footer>
+
+  <!-- Banner de cookies / analítica -->
+  <div class="cookie-banner" id="cookie-banner" role="region" aria-label="Preferencias de cookies y analítica" hidden>
+    <p class="cookie-banner__texto">
+      Usamos una cookie propia para contar visitas de forma anónima y mejorar el sitio. No compartimos datos con terceros.
+      Podés leer más en nuestra <a href="/cookies.html">Política de cookies</a>.
+    </p>
+    <div class="cookie-banner__acciones">
+      <button type="button" class="btn btn-outline-custom btn-sm" id="cookie-rechazar">Rechazar</button>
+      <button type="button" class="btn btn-accent-custom btn-sm" id="cookie-aceptar">Aceptar</button>
+    </div>
+  </div>
 
   <!-- Scripts: Bootstrap 5, GSAP, Lenis Smooth Scroll -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/bundled/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 
   <!-- Módulo ES Principal de la Home -->
   <script type="module" src="./js/pages/home.js"></script>

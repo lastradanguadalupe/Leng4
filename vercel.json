@@ -26,6 +26,9 @@
     { "source": "/login", "destination": "/login.html" },
     { "source": "/registro", "destination": "/login.html" },
     { "source": "/admin", "destination": "/panel/admin.html" },
-    { "source": "/operador", "destination": "/panel/operador.html" }
+    { "source": "/operador", "destination": "/panel/operador.html" },
+    { "source": "/terminos", "destination": "/terminos.html" },
+    { "source": "/privacidad", "destination": "/privacidad.html" },
+    { "source": "/cookies", "destination": "/cookies.html" }
   ]
 }

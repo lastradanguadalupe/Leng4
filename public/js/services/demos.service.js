@@ -1,6 +1,11 @@
 // ==============================================================================
 // public/js/services/demos.service.js
 // Servicio de Demos Interactivas
+//
+// ESQUEMA REAL de `demos`: id, titulo, proyecto_id, tipo, instrucciones,
+// orden, creado_en. No tiene `descripcion` ni `publicado`.
+// RLS: solo los usuarios con sesión pueden leerlas; a un visitante la consulta
+// le devuelve 0 filas, que es el bloqueo que pide la consigna.
 // ==============================================================================
 
 import { supabase } from "../core/supabase.js";
@@ -10,9 +15,10 @@ export const DemosService = {
    * Obtiene todas las demos o las de un proyecto en particular
    */
   async getByProyecto(proyectoId = null) {
+    // El embed pedía `proyectos(title, slug)` y la columna es `titulo`.
     let query = supabase
       .from("demos")
-      .select("*, proyectos(title, slug)")
+      .select("*, proyectos(titulo, slug)")
       .order("orden", { ascending: true });
 
     if (proyectoId) {

@@ -3,7 +3,7 @@
 // Panel de Operador: Gestión de Consultas, Filtros y Respuestas por Email
 // ==============================================================================
 
-import { requireRole, initAuth, getCurrentUser } from "../core/auth.js";
+import { requireRole, initAuth, getCurrentUser, isAdmin } from "../core/auth.js";
 import { ConsultasService } from "../services/consultas.service.js";
 import { Toast } from "../components/toast.js";
 import { Modal } from "../components/modal.js";
@@ -21,6 +21,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Validar rol de Operador o Administrador
   const authorized = await requireRole([CONFIG.ROLES.OPERADOR, CONFIG.ROLES.ADMIN]);
   if (!authorized) return;
+
+  // El acceso al panel de admin es solo del rol admin: al operador no se le ofrece.
+  const enlaceAdmin = document.getElementById("link-panel-admin");
+  if (enlaceAdmin) enlaceAdmin.hidden = !isAdmin();
 
   initFilters();
   await cargarConsultas();

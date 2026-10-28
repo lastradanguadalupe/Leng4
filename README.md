@@ -74,11 +74,14 @@ Leng4/
 ├── README.md                          # Documentación del proyecto
 ├── supabase/
 │   ├── migrations/
-│   │   ├── 001_initial_schema.sql     # Tablas: profiles, proyectos, demos, servicios, consultas, analytics
-│   │   ├── 002_rls_policies.sql       # Políticas RLS estrictas por rol
-│   │   ├── 003_analytics_rpc.sql      # Funciones RPC en Postgres para gráficos parametrizados
-│   │   └── 004_storage_setup.sql      # Configuración de bucket 'portfolio-assets'
-│   ├── seed.sql                       # Datos iniciales realistas para evaluación
+│   │   ├── 001_tipos_y_tablas.sql     # Extensiones, enums, 16 tablas, columnas identity e índices
+│   │   ├── 002_funciones_y_triggers.sql # Helpers de rol, RPC de analítica y triggers (incl. auth.users)
+│   │   ├── 003_vistas.sql             # proyectos_publicos y storage_huerfanos (security_invoker)
+│   │   ├── 004_rls_y_politicas.sql    # RLS activo y políticas por rol
+│   │   ├── 005_permisos.sql           # GRANT de tablas, columnas (proyectos) y funciones
+│   │   └── 006_storage.sql            # Buckets avatares, publico, galeria y sus políticas
+│   ├── AJUSTES_PENDIENTES.sql         # Parche idempotente para bases creadas antes de estas migraciones
+│   ├── DATOS_SERVICIOS_Y_TESTIMONIOS.sql # Servicios y testimonios ilustrativos
 │   └── functions/
 │       ├── send-email/index.ts        # Edge Function: Notificación de nuevo contacto
 │       └── reply-contact/index.ts     # Edge Function: Respuesta de operador por email
@@ -159,8 +162,10 @@ el HTML con `data-brand-name`, `data-brand-tagline` y `data-brand-legal`.
 
 2. **Base de datos**:
    - La base real usa nombres de columna en español (`titulo`, `descripcion`, `publicado`, ...).
-   - Los archivos de `supabase/migrations/001..004` describen un esquema en inglés que **no coincide con la base real**; no los ejecutes sobre ese proyecto.
-   - Sobre la base existente se corre una sola vez `supabase/AJUSTES_PENDIENTES.sql` en **SQL Editor**; es aditivo e idempotente.
+   - `supabase/migrations/001..006` reflejan **el esquema real** del proyecto (se generaron leyendo `pg_catalog` de la base en producción). Para levantar una base nueva se ejecutan en orden en **SQL Editor** (o con `supabase db push`) y después `DATOS_SERVICIOS_Y_TESTIMONIOS.sql`.
+   - Sobre una base que ya existe **no hace falta correrlas**: ahí se usa una sola vez `supabase/AJUSTES_PENDIENTES.sql`, aditivo e idempotente.
+   - `005_permisos.sql` empieza con `REVOKE ALL` sobre las tablas y vuelve a conceder lo necesario; no la corras sobre una base con datos sin revisarla antes.
+   - El permiso por columna de `proyectos` (anon no lee `descripcion`, `url_repo` ni `cliente`) está en `005_permisos.sql`.
 
 3. **Edge Functions (correos)**:
    - `supabase functions deploy send-email` y `supabase functions deploy reply-contact`.

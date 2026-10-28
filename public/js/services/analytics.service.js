@@ -166,17 +166,19 @@ export const AnalyticsService = {
       console.warn("RPC get_consultas_analytics falló:", rpcErr);
       // Fallback
       const { data } = await supabase.from("consultas").select("tipo, estado");
-      const map = { general: 0, cotizacion: 0, asesoria: 0 };
-      (data || []).forEach(c => {
-        if (map[c.tipo] !== undefined) map[c.tipo]++;
+      // Se cuentan los estados reales; no se inventa ninguna cifra.
+      const map = {};
+      ["general", "cotizacion", "asesoria"].forEach((t) => {
+        map[t] = { tipo: t, total: 0, nuevas: 0, en_proceso: 0, respondidas: 0, cerradas: 0 };
       });
-      return Object.entries(map).map(([tipo, total]) => ({
-        tipo,
-        total,
-        nuevas: 0,
-        en_seguimiento: 0,
-        respondidas: total
-      }));
+      const clave = { nueva: "nuevas", en_proceso: "en_proceso", respondida: "respondidas", cerrada: "cerradas" };
+      (data || []).forEach((c) => {
+        const fila = map[c.tipo];
+        if (!fila) return;
+        fila.total++;
+        if (clave[c.estado]) fila[clave[c.estado]]++;
+      });
+      return Object.values(map);
     }
   },
 

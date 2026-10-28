@@ -168,7 +168,7 @@ el HTML con `data-brand-name`, `data-brand-tagline` y `data-brand-legal`.
    - El permiso por columna de `proyectos` (anon no lee `descripcion`, `url_repo` ni `cliente`) está en `005_permisos.sql`.
 
 3. **Edge Functions (correos)**:
-   - `supabase functions deploy send-email` y `supabase functions deploy reply-contact`.
+   - `supabase functions deploy send-email` y `supabase functions deploy reply-contact`, o pegando el código de cada `index.ts` en **Edge Functions → Via Editor** del dashboard (así se desplegaron). Ambas funciones quedan con "Verify JWT" activado: el formulario pasa esa verificación con la clave publishable, y `reply-contact` además exige una sesión de operador o admin.
    - Secretos: `supabase secrets set RESEND_API_KEY=...`. Opcionales: `PORTFOLIO_OWNER_EMAIL` (destino del aviso de contacto) y `RESEND_FROM` (remitente).
    - Sin dominio verificado en Resend, el remitente solo puede ser `onboarding@resend.dev` y los correos solo llegan a la casilla dueña de la cuenta de Resend. Para responder a cualquier remitente hay que verificar un dominio.
    - Sin `RESEND_API_KEY` la respuesta del operador se guarda en el historial con `enviado_en` en null y el panel avisa que el correo no salió.

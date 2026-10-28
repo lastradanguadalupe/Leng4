@@ -50,6 +50,7 @@
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
             <li class="nav-item"><a class="nav-link" href="#perfil">Perfil</a></li>
             <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+            <li class="nav-item"><a class="nav-link" href="#testimonios">Testimonios</a></li>
             <li class="nav-item"><a class="nav-link" href="#experiencia">Experiencia</a></li>
             <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos &amp; Demos</a></li>
             <li class="nav-item"><a class="nav-link" href="#github">GitHub</a></li>
@@ -171,26 +172,26 @@
             <div class="row g-3">
               <div class="col-6">
                 <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
-                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="5" data-suffix="+">0</div>
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="3" data-suffix="+">0</div>
                   <div class="text-white-50 small text-uppercase">Años de Experiencia</div>
                 </div>
               </div>
-              <div class="col-6">
+              <div class="col-6" data-contador>
                 <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
-                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="28" data-suffix="+">0</div>
-                  <div class="text-white-50 small text-uppercase">Proyectos Desplegados</div>
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" id="perfil-proyectos" data-dinamico data-target="0">0</div>
+                  <div class="text-white-50 small text-uppercase">Proyectos Publicados</div>
                 </div>
               </div>
               <div class="col-6">
                 <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
-                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="99.9" data-decimals="1" data-suffix="%">0</div>
-                  <div class="text-white-50 small text-uppercase">Uptime &amp; Confiabilidad</div>
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="8">0</div>
+                  <div class="text-white-50 small text-uppercase">Servicios Ofrecidos</div>
                 </div>
               </div>
               <div class="col-6">
                 <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
-                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="150" data-suffix="k+">0</div>
-                  <div class="text-white-50 small text-uppercase">Líneas de Código Testeadas</div>
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="4">0</div>
+                  <div class="text-white-50 small text-uppercase">Roles de Acceso</div>
                 </div>
               </div>
             </div>
@@ -212,6 +213,76 @@
       </div>
     </section>
 
+    <!-- SECCIÓN TESTIMONIOS -->
+    <section class="section-wrapper" id="testimonios">
+      <div class="container">
+        <div class="section-header-reveal text-center mb-5">
+          <span class="section-tag">Testimonios</span>
+          <h2 class="fw-bold">Lo que dicen quienes ya trabajaron con nosotros</h2>
+        </div>
+      </div>
+      <div class="testimonios-marquesina" id="testimonios-marquesina" role="region" aria-label="Testimonios de clientes">
+        <!-- Renderizado dinámico desde Supabase -->
+      </div>
+      <div class="container">
+        <div class="row g-3 justify-content-center mt-4 testimonios-contadores">
+          <div class="col-6 col-md-3" data-contador>
+            <div class="testimonios-contador">
+              <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" id="contador-proyectos" data-dinamico data-target="0" data-suffix="">0</div>
+              <div class="text-white-50 small text-uppercase">Proyectos entregados</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3" data-contador>
+            <div class="testimonios-contador">
+              <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" id="contador-clientes" data-dinamico data-target="0" data-suffix="">0</div>
+              <div class="text-white-50 small text-uppercase">Clientes satisfechos</div>
+            </div>
+          </div>
+          <div class="col-12 col-md-3" data-contador>
+            <div class="testimonios-contador">
+              <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" id="contador-anios" data-dinamico data-target="0" data-suffix="+">0</div>
+              <div class="text-white-50 small text-uppercase">Años de experiencia</div>
+            </div>
+          </div>
+        </div>
+        <p class="testimonios-aviso text-center mb-0">
+          Los testimonios son ilustrativos: se redactaron para este trabajo académico y no corresponden a clientes reales.
+        </p>
+      </div>
+    </section>
+
+    <!-- FRANJA CÓMO TRABAJAMOS -->
+    <section class="section-wrapper" id="como-trabajamos">
+      <div class="container">
+        <div class="section-header-reveal text-center mb-5">
+          <span class="section-tag">Proceso</span>
+          <h2 class="fw-bold">Cómo trabajamos</h2>
+        </div>
+        <ol class="proceso-pasos list-unstyled">
+          <li class="proceso-paso">
+            <span class="proceso-numero">01</span>
+            <h3 class="proceso-titulo">Descubrimiento</h3>
+            <p>Entendemos el problema, a quién va dirigido y qué tiene que lograr el proyecto.</p>
+          </li>
+          <li class="proceso-paso">
+            <span class="proceso-numero">02</span>
+            <h3 class="proceso-titulo">Diseño y prototipo</h3>
+            <p>Bocetamos las pantallas y armamos un prototipo navegable para validar antes de programar.</p>
+          </li>
+          <li class="proceso-paso">
+            <span class="proceso-numero">03</span>
+            <h3 class="proceso-titulo">Desarrollo iterativo</h3>
+            <p>Construimos en ciclos cortos con entregas parciales para que veas avances reales.</p>
+          </li>
+          <li class="proceso-paso">
+            <span class="proceso-numero">04</span>
+            <h3 class="proceso-titulo">Entrega y soporte</h3>
+            <p>Publicamos, documentamos y quedamos disponibles para ajustes después del lanzamiento.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
     <!-- SECCIÓN EXPERIENCIA / TIMELINE -->
     <section class="section-wrapper" id="experiencia">
       <div class="container">
@@ -225,30 +296,33 @@
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="timeline-content-card">
-              <span class="badge badge-accent mb-2">2024 - Presente</span>
-              <h4 class="fw-bold text-white mb-1">Senior Fullstack Architect</h4>
-              <p class="text-white-50 mb-0">Liderazgo técnico en plataformas SaaS multi-inquilino. Implementación de esquemas distribuidos con Supabase, Edge Functions y optimización de latencias globales.</p>
+              <span class="badge badge-accent mb-2">2026 - Presente</span>
+              <h4 class="fw-bold text-white mb-1">Desarrollo Fullstack a Medida</h4>
+              <p class="text-white-50 mb-0">Sitios y sistemas para pequeños negocios sobre Supabase y PostgreSQL: autenticación por roles, panel de gestión, Edge Functions para correos y despliegue en Vercel.</p>
             </div>
           </div>
 
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="timeline-content-card">
-              <span class="badge badge-accent mb-2">2022 - 2024</span>
-              <h4 class="fw-bold text-white mb-1">Frontend Engineer &amp; Creative Developer</h4>
-              <p class="text-white-50 mb-0">Desarrollo de interfaces inmersivas con animaciones GSAP y WebGL para clientes internacionales en comercio electrónico y finanzas descentralizadas.</p>
+              <span class="badge badge-accent mb-2">2025</span>
+              <h4 class="fw-bold text-white mb-1">APIs, Catálogos y Bases de Datos</h4>
+              <p class="text-white-50 mb-0">API REST con stock por sucursal y movimientos auditados, y un catálogo mayorista con precios por tipo de cliente. Modelado relacional y políticas de seguridad por fila.</p>
             </div>
           </div>
 
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="timeline-content-card">
-              <span class="badge badge-accent mb-2">2020 - 2022</span>
-              <h4 class="fw-bold text-white mb-1">Backend &amp; Database Developer</h4>
-              <p class="text-white-50 mb-0">Construcción y modelado de APIs RESTful en Node.js, procedimientos almacenados y optimización de índices en bases de datos relacionales PostgreSQL.</p>
+              <span class="badge badge-accent mb-2">2024</span>
+              <h4 class="fw-bold text-white mb-1">Primeros Proyectos Web</h4>
+              <p class="text-white-50 mb-0">Una landing con animaciones GSAP para un estudio de arquitectura y una intranet de reportes con exportación a CSV para una cooperativa.</p>
             </div>
           </div>
         </div>
+        <p class="testimonios-aviso text-center mb-0">
+          La trayectoria y las cifras del perfil son ilustrativas: se redactaron para este trabajo académico.
+        </p>
       </div>
     </section>
 
@@ -385,6 +459,7 @@
             <li><a href="#hero">Inicio</a></li>
             <li><a href="#perfil">Perfil</a></li>
             <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#testimonios">Testimonios</a></li>
             <li><a href="#experiencia">Experiencia</a></li>
             <li><a href="#proyectos">Proyectos &amp; Demos</a></li>
             <li><a href="#contacto">Contacto</a></li>

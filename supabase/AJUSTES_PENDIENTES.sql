@@ -153,7 +153,7 @@ UPDATE public.servicios SET entregables = ARRAY[
   'Una pantalla optimizada para convertir',
   'Formulario con anti-spam',
   'Medición de visitas incluida'
-] WHERE slug = 'landing-pages-de-conversion' AND cardinality(entregables) = 0;
+] WHERE slug = 'landing-pages' AND cardinality(entregables) = 0;
 
 UPDATE public.servicios SET entregables = ARRAY[
   'API REST documentada',

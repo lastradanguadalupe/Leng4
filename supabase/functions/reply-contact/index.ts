@@ -82,7 +82,7 @@ serve(async (req: Request) => {
     }
 
     const cleanMensaje = payload.mensaje.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    const cleanAsunto = payload.asunto.replace(/[<>]/g, "");
+    const cleanAsunto = String(payload.asunto || "Respuesta a tu consulta").replace(/[<>]/g, "");
 
     // 2. Enviar email vía Resend
     let emailSuccess = false;
@@ -96,13 +96,15 @@ serve(async (req: Request) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "Soporte Portfolio <soporte@resend.dev>",
+          // Sin dominio verificado en Resend, el único remitente permitido es onboarding@resend.dev
+          // (y solo entrega a la casilla del dueño de la cuenta de Resend).
+          from: Deno.env.get("RESEND_FROM") || "Portfolio <onboarding@resend.dev>",
           to: [payload.destinatario_email],
           subject: cleanAsunto,
           html: `
             <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #000000; color: #ffffff; padding: 28px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
               <h3 style="color: #6049ea; margin-top: 0;">Respuesta a tu consulta en nuestro Portfolio</h3>
-              <p style="color: rgba(255,255,255,0.7); font-size: 14px;">Atendido por: <strong>${profile.full_name || profile.email}</strong></p>
+              <p style="color: rgba(255,255,255,0.7); font-size: 14px;">Atendido por: <strong>${profile.nombre || profile.email}</strong></p>
               <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 18px 0;" />
               <div style="background: rgba(255,255,255,0.04); padding: 18px; border-radius: 8px; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">
                 ${cleanMensaje}
@@ -122,9 +124,8 @@ serve(async (req: Request) => {
         console.error("Fallo envío en Resend:", errText);
       }
     } else {
-      console.log("Aviso: Modo simulación de email de operador (sin RESEND_API_KEY).");
-      emailSuccess = true;
-      providerId = "simulated_" + Date.now();
+      // Sin clave no se envía nada: no se marca como enviado (enviado_en queda en null).
+      console.log("Aviso: RESEND_API_KEY no configurada; la respuesta se guarda pero el correo no se envía.");
     }
 
     // 3. Registrar la respuesta en la tabla `respuestas`.
@@ -151,7 +152,8 @@ serve(async (req: Request) => {
       });
     }
 
-    return new Response(JSON.stringify({ status: "success", data: respuestaData }), {
+    // `enviado` dice si el correo salió de verdad; el cliente no debe inferirlo del status.
+    return new Response(JSON.stringify({ status: "success", enviado: emailSuccess, provider_id: providerId, data: respuestaData }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

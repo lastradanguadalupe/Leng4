@@ -8,6 +8,9 @@ export const CONFIG = {
   SUPABASE_URL: window.__ENV__?.VITE_SUPABASE_URL || "https://rhiayaozcmbqxrqzxvcd.supabase.co",
   SUPABASE_ANON_KEY: window.__ENV__?.VITE_SUPABASE_ANON_KEY || "sb_publishable_CuNcp22GSj-rDPNIQZSboA_vW2px8xI",
   
+  // Scroll suave con Lenis. En false se usa el scroll nativo del navegador.
+  SMOOTH_SCROLL: true,
+
   // Storage
   STORAGE_BUCKET: "portfolio-assets",
   MAX_FILE_SIZE_BYTES: 5 * 1024 * 1024, // 5MB

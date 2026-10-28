@@ -3,8 +3,10 @@
   "configurations": [
     {
       "name": "portfolio",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "3000", "--directory", "public"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        ".claude/dev-server.mjs"
+      ],
       "port": 3000
     }
   ]

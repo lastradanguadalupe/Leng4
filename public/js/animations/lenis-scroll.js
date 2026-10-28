@@ -3,6 +3,8 @@
 // Scroll Suave Inmersivo con Lenis e Integración con GSAP ScrollTrigger
 // ==============================================================================
 
+import { CONFIG } from "../config.js";
+
 export let lenisInstance = null;
 
 export function initSmoothScroll() {
@@ -12,11 +14,21 @@ export function initSmoothScroll() {
     return null;
   }
 
+  // Interruptor: con SMOOTH_SCROLL en false se usa el scroll nativo, sin tocar código
+  if (CONFIG.SMOOTH_SCROLL === false) {
+    return null;
+  }
+
   // Comprobar si Lenis está disponible globalmente en window o importarlo
   if (window.Lenis) {
+    // Lenis y el scroll-behavior: smooth nativo (Bootstrap lo trae) pelean entre sí:
+    // con Lenis activo el navegador debe scrollear en modo "auto".
+    document.documentElement.style.scrollBehavior = "auto";
+
+    // lerp en lugar de duration: la rueda responde casi al instante y solo
+    // suaviza el final, sin la sensación de arrastre de más de un segundo.
     lenisInstance = new window.Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.12,
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,

@@ -178,7 +178,9 @@ export const ConsultasService = {
       if (edgeError) {
         console.warn("La Edge Function reply-contact falló:", edgeError.message);
       } else if (data?.status === "success") {
-        correoEnviado = true;
+        // La función guarda siempre el historial, pero el correo solo cuenta como
+        // enviado si ella lo confirma (`enviado`) y dejó `enviado_en` con fecha.
+        correoEnviado = data.enviado === true && !!data.data?.enviado_en;
         guardadoPorLaFuncion = true;
         respuesta = data.data || null;
       }

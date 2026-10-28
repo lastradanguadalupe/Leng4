@@ -70,7 +70,6 @@ Para probar los diferentes roles y permisos en la plataforma:
 
 ```
 Leng4/
-├── .env.example                       # Variables de entorno documentadas
 ├── vercel.json                        # Configuración de despliegue y headers de seguridad
 ├── README.md                          # Documentación del proyecto
 ├── supabase/
@@ -107,6 +106,12 @@ Leng4/
         ├── animations/                # GSAP, Lenis Smooth Scroll, 3D Tilt
         └── pages/                     # Controladores de página
 ```
+
+---
+
+## 💬 4.a Aviso sobre los testimonios
+
+Los testimonios de la sección "Lo que dicen quienes ya trabajaron con nosotros" son **ilustrativos**: se redactaron para este trabajo académico, con empresas y personas ficticias, y no corresponden a clientes reales. El sitio lo aclara debajo de la sección.
 
 ---
 
@@ -148,27 +153,29 @@ el HTML con `data-brand-name`, `data-brand-tagline` y `data-brand-legal`.
 
 ## 💻 5. Instrucciones de Ejecución Local (Localhost)
 
-1. **Configuración de variables de entorno**:
-   - Copia `.env.example` a `.env`.
-   - Coloca tu `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
+1. **Conexión a Supabase**:
+   - El sitio es estático y no tiene paso de compilación, así que **no usa archivos `.env`**.
+   - La URL del proyecto y la clave `sb_publishable_...` se definen en `public/js/config.js`. La clave publishable es pública por diseño: la seguridad la imponen las políticas RLS de la base.
 
-2. **Ejecución de Migraciones en Supabase**:
-   - En tu proyecto de Supabase, ve a la sección **SQL Editor**.
-   - Ejecuta en orden los archivos de `supabase/migrations/`:
-     - `001_initial_schema.sql`
-     - `002_rls_policies.sql`
-     - `003_analytics_rpc.sql`
-     - `004_storage_setup.sql`
-   - Opcionalmente ejecuta `supabase/seed.sql` para tener proyectos, servicios y métricas de demostración cargadas al instante.
+2. **Base de datos**:
+   - La base real usa nombres de columna en español (`titulo`, `descripcion`, `publicado`, ...).
+   - Los archivos de `supabase/migrations/001..004` describen un esquema en inglés que **no coincide con la base real**; no los ejecutes sobre ese proyecto.
+   - Sobre la base existente se corre una sola vez `supabase/AJUSTES_PENDIENTES.sql` en **SQL Editor**; es aditivo e idempotente.
 
-3. **Iniciar el servidor local**:
+3. **Edge Functions (correos)**:
+   - `supabase functions deploy send-email` y `supabase functions deploy reply-contact`.
+   - Secretos: `supabase secrets set RESEND_API_KEY=...`. Opcionales: `PORTFOLIO_OWNER_EMAIL` (destino del aviso de contacto) y `RESEND_FROM` (remitente).
+   - Sin dominio verificado en Resend, el remitente solo puede ser `onboarding@resend.dev` y los correos solo llegan a la casilla dueña de la cuenta de Resend. Para responder a cualquier remitente hay que verificar un dominio.
+   - Sin `RESEND_API_KEY` la respuesta del operador se guarda en el historial con `enviado_en` en null y el panel avisa que el correo no salió.
+
+4. **Iniciar el servidor local**:
    - Al estar construido en **JavaScript Vanilla con Módulos ES**, no requiere procesos de compilación complejos. Puedes servir la carpeta `public/` con cualquier servidor estático:
      ```bash
      # Con npx serve
      npx serve public -p 3000
 
-     # Con Python
-     python -m http.server 3000 --directory public
+     # Con el servidor de desarrollo del repo (manda Cache-Control: no-store)
+     node .claude/dev-server.mjs
 
      # Con Live Server de VS Code / IDE
      # Clic derecho en public/index.html -> Open with Live Server
@@ -182,7 +189,5 @@ el HTML con `data-brand-name`, `data-brand-tagline` y `data-brand-legal`.
 1. Sube el repositorio a **GitHub**.
 2. Ingresa a [Vercel](https://vercel.com) y selecciona **Add New Project** -> Importa tu repositorio.
 3. En **Root Directory**, selecciona `public` (o deja la raíz ya que `vercel.json` se encarga del enrutamiento).
-4. En **Environment Variables**, define:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
+4. No hace falta definir variables de entorno: la configuración vive en `public/js/config.js`.
 5. Haz clic en **Deploy**. ¡El sitio estará disponible globalmente con certificados SSL y CDN!

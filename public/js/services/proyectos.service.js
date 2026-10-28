@@ -127,6 +127,57 @@ export const ProyectosService = {
   },
 
   /**
+   * Sincroniza las tecnologías de un proyecto.
+   *
+   * No son una columna del proyecto sino una relación muchos-a-muchos a través
+   * de `proyecto_tecnologias`, así que hay que resolver los nombres contra la
+   * tabla `tecnologias`, borrar los vínculos viejos y escribir los nuevos.
+   *
+   * @returns {Promise<string[]>} los nombres que no existen en `tecnologias`
+   */
+  async setTecnologias(proyectoId, nombres = []) {
+    const limpios = [...new Set(nombres.map((n) => n.trim()).filter(Boolean))];
+
+    // Resolver nombres -> ids (sin distinguir mayúsculas)
+    let encontradas = [];
+    if (limpios.length) {
+      const { data, error } = await supabase
+        .from("tecnologias")
+        .select("id, nombre")
+        .or(limpios.map((n) => `nombre.ilike.${n}`).join(","));
+
+      if (error) throw error;
+      encontradas = data || [];
+    }
+
+    const noEncontradas = limpios.filter(
+      (n) => !encontradas.some((t) => t.nombre.toLowerCase() === n.toLowerCase())
+    );
+
+    // Reemplazar los vínculos: primero borrar, después insertar.
+    const { error: errorBorrado } = await supabase
+      .from("proyecto_tecnologias")
+      .delete()
+      .eq("proyecto_id", proyectoId);
+
+    if (errorBorrado) throw errorBorrado;
+
+    if (encontradas.length) {
+      const filas = encontradas.map((t) => ({
+        proyecto_id: proyectoId,
+        tecnologia_id: t.id
+      }));
+      const { error: errorInsercion } = await supabase
+        .from("proyecto_tecnologias")
+        .insert(filas);
+
+      if (errorInsercion) throw errorInsercion;
+    }
+
+    return noEncontradas;
+  },
+
+  /**
    * Elimina un proyecto (Requiere Admin)
    */
   async delete(id) {

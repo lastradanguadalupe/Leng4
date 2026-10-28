@@ -63,17 +63,30 @@ export const AnalyticsService = {
       });
 
       if (error) {
-        // Fallback: Si no existe el RPC, insertar directamente en la tabla
-        await supabase.from("analytics_visitas").insert({
+        // Fallback si la función `record_visit` todavía no existe.
+        // La tabla es `visitas` (no `analytics_visitas`) y sus columnas son
+        // ruta, referente, dispositivo y resolucion, no page_path/referrer/
+        // device_type/screen_resolution. Varias las agrega
+        // supabase/AJUSTES_PENDIENTES.sql, así que esto puede seguir fallando
+        // hasta que se corra ese SQL; el aviso queda en la consola.
+        const { error: errorInsercion } = await supabase.from("visitas").insert({
           session_id: sessionId,
-          page_path: path,
-          referrer: document.referrer || "directo",
+          ruta: path,
+          referente: document.referrer || "directo",
           pais: geoData.country || null,
           ciudad: geoData.city || null,
-          device_type: deviceType,
-          screen_resolution: screenRes,
-          fecha: new Date().toISOString().split("T")[0]
+          dispositivo: deviceType,
+          resolucion: screenRes,
+          ip_hash: ipHash
         });
+
+        if (errorInsercion) {
+          console.warn(
+            "No se pudo registrar la visita. Corré supabase/AJUSTES_PENDIENTES.sql " +
+              "para crear la función record_visit y completar la tabla `visitas`:",
+            errorInsercion.message
+          );
+        }
       }
       return data;
     } catch (err) {
@@ -91,13 +104,15 @@ export const AnalyticsService = {
       return data;
     } catch (rpcErr) {
       console.warn("RPC get_admin_dashboard_summary falló, calculando con queries directas:", rpcErr);
-      // Fallback con queries directas
+      // Fallback con queries directas.
+      // La tabla es `visitas` (no `analytics_visitas`, que no existe) y las
+      // columnas son `autenticado` y `publicado`.
       const [visitasRes, authVisitasRes, usersRes, consultasRes, proyRes] = await Promise.all([
-        supabase.from("analytics_visitas").select("id, session_id", { count: "exact" }),
-        supabase.from("analytics_visitas").select("id", { count: "exact" }).eq("is_authenticated", true),
+        supabase.from("visitas").select("id, session_id", { count: "exact" }),
+        supabase.from("visitas").select("id", { count: "exact" }).eq("autenticado", true),
         supabase.from("profiles").select("id", { count: "exact" }),
         supabase.from("consultas").select("id, estado"),
-        supabase.from("proyectos").select("id", { count: "exact" }).eq("published", true)
+        supabase.from("proyectos").select("id", { count: "exact" }).eq("publicado", true)
       ]);
 
       const totalVisitas = visitasRes.count || 0;
@@ -194,16 +209,19 @@ export const AnalyticsService = {
       if (error) throw error;
       return data || [];
     } catch (rpcErr) {
-      console.warn("RPC get_top_projects_analytics falló:", rpcErr);
-      const { data: proys } = await supabase
-        .from("proyectos")
-        .select("id, title, slug, thumbnail_url")
-        .limit(limit);
-      return (proys || []).map((p, idx) => ({
-        ...p,
-        total_views: (limit - idx) * 12,
-        unique_viewers: (limit - idx) * 8
-      }));
+      // Sin la función no hay manera de saber las vistas reales.
+      //
+      // Antes este fallback DEVOLVÍA NÚMEROS INVENTADOS
+      // (`total_views: (limit - idx) * 12`), así que el gráfico de "proyectos
+      // más vistos" mostraba estadísticas falsas con total naturalidad. En un
+      // panel de métricas que se evalúa, eso es peor que no mostrar nada:
+      // ahora se devuelve vacío y el gráfico queda con su estado sin datos.
+      console.warn(
+        "RPC get_top_projects_analytics no disponible. " +
+          "Corré supabase/AJUSTES_PENDIENTES.sql para crear las funciones de analítica.",
+        rpcErr
+      );
+      return [];
     }
   }
 };

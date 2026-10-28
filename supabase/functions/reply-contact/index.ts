@@ -55,14 +55,17 @@ serve(async (req: Request) => {
       });
     }
 
-    // Verificar en profiles que sea 'operador' o 'admin'
+    // Verificar en profiles que sea 'operador' o 'admin'.
+    // El esquema real usa `rol`, `nombre` y `bloqueado` (no role/full_name/
+    // is_blocked): con los nombres viejos el SELECT fallaba y la función
+    // denegaba el permiso a todos, incluso al admin.
     const { data: profile, error: profileError } = await supabaseAdmin
       .from("profiles")
-      .select("role, is_blocked, full_name, email")
+      .select("rol, bloqueado, nombre, email")
       .eq("id", user.id)
       .single();
 
-    if (profileError || !profile || (profile.role !== "operador" && profile.role !== "admin") || profile.is_blocked) {
+    if (profileError || !profile || (profile.rol !== "operador" && profile.rol !== "admin") || profile.bloqueado) {
       return new Response(JSON.stringify({ error: "Permiso denegado: solo operadores o administradores pueden responder consultas" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -124,17 +127,18 @@ serve(async (req: Request) => {
       providerId = "simulated_" + Date.now();
     }
 
-    // 3. Registrar la respuesta en la tabla respuestas_consultas
+    // 3. Registrar la respuesta en la tabla `respuestas`.
+    //    La tabla real es `respuestas` (id, consulta_id, operador_id, cuerpo,
+    //    creado_en, enviado_en); `respuestas_consultas` no existe, así que
+    //    esta función fallaba con 500 al guardar el historial.
+    //    `enviado_en` se completa solo si el correo salió de verdad.
     const { data: respuestaData, error: dbError } = await supabaseAdmin
-      .from("respuestas_consultas")
+      .from("respuestas")
       .insert({
         consulta_id: payload.consulta_id,
         operador_id: user.id,
-        destinatario_email: payload.destinatario_email,
-        asunto: cleanAsunto,
-        mensaje: payload.mensaje,
-        enviado_exitosamente: emailSuccess,
-        provider_id: providerId,
+        cuerpo: payload.mensaje,
+        enviado_en: emailSuccess ? new Date().toISOString() : null,
       })
       .select()
       .single();

@@ -15,6 +15,23 @@ import { Modal } from "../components/modal.js";
 import { CustomCursor } from "../components/cursor.js";
 import { escapeHTML } from "../core/security.js";
 import { CONFIG } from "../config.js";
+import { supabase } from "../core/supabase.js";
+import { iconoSVG, slugsDeIconos } from "../data/iconos.js";
+import "../core/diagnostico.js";
+
+/**
+ * URL pública de una imagen del bucket a partir de su ruta.
+ * `proyectos.imagen_portada` guarda la ruta ("proyectos/x.webp"), no la URL.
+ */
+function portadaUrl(ruta) {
+  if (!ruta) return "";
+  try {
+    const { data } = supabase.storage.from(CONFIG.STORAGE_BUCKET).getPublicUrl(ruta);
+    return data?.publicUrl || "";
+  } catch {
+    return "";
+  }
+}
 
 // Instancias de Chart.js
 let chartTraffic = null;
@@ -244,7 +261,7 @@ async function renderTopProjectsChart() {
 
   const data = await AnalyticsService.getTopProjects(5);
 
-  const labels = data.map(d => d.title);
+  const labels = data.map(d => d.titulo);
   const views = data.map(d => d.total_views);
 
   if (chartProjects) chartProjects.destroy();
@@ -294,22 +311,26 @@ async function cargarTablaProyectos() {
     tbody.innerHTML = proyectos.map(p => `
       <tr class="align-middle">
         <td>
-          <img src="${p.thumbnail_url}" alt="${escapeHTML(p.title)}" style="width: 56px; height: 36px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);">
+          ${
+            p.imagen_portada
+              ? `<img src="${portadaUrl(p.imagen_portada)}" alt="Portada de ${escapeHTML(p.titulo)}" style="width: 56px; height: 36px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);">`
+              : `<div style="width: 56px; height: 36px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(96,73,234,0.15);"></div>`
+          }
         </td>
         <td>
-          <strong>${escapeHTML(p.title)}</strong><br>
+          <strong>${escapeHTML(p.titulo)}</strong><br>
           <small class="text-white-50">/${escapeHTML(p.slug)}</small>
         </td>
         <td>
           <div class="d-flex gap-1 flex-wrap">
-            ${(p.tech_stack || []).map(t => `<span class="badge badge-tech small">${escapeHTML(t)}</span>`).join("")}
+            ${(p.tecnologias || []).map(t => `<span class="badge badge-tech small">${escapeHTML(t.nombre || t)}</span>`).join("")}
           </div>
         </td>
         <td>
           ${p.demos?.length ? `<span class="badge badge-accent">${p.demos.length} demos</span>` : `<span class="badge bg-secondary">Sin demos</span>`}
         </td>
         <td>
-          ${p.published ? `<span class="badge bg-success">Publicado</span>` : `<span class="badge bg-secondary">Borrador</span>`}
+          ${p.publicado ? `<span class="badge bg-success">Publicado</span>` : `<span class="badge bg-secondary">Borrador</span>`}
         </td>
         <td>
           <div class="d-flex gap-2">
@@ -356,10 +377,10 @@ async function cargarTablaServicios() {
     const servicios = await ServiciosService.getAll(false);
     tbody.innerHTML = servicios.map(s => `
       <tr class="align-middle">
-        <td><div style="width: 32px; height: 32px;">${s.icon_svg}</div></td>
-        <td><strong>${escapeHTML(s.title)}</strong></td>
-        <td><small class="text-white-50">${(s.features || []).join(", ")}</small></td>
-        <td>${s.is_active ? `<span class="badge bg-success">Activo</span>` : `<span class="badge bg-secondary">Inactivo</span>`}</td>
+        <td><div style="width: 32px; height: 32px; color: var(--color-accent-light);">${iconoSVG(s.icono, 28)}</div></td>
+        <td><strong>${escapeHTML(s.titulo)}</strong></td>
+        <td><small class="text-white-50">${(s.entregables || []).map(e => escapeHTML(e)).join(", ")}</small></td>
+        <td>${s.activo ? `<span class="badge bg-success">Activo</span>` : `<span class="badge bg-secondary">Inactivo</span>`}</td>
         <td>
           <button class="btn btn-sm btn-outline-custom btn-edit-servicio" data-id="${s.id}">Editar</button>
           <button class="btn btn-sm btn-danger btn-delete-servicio" data-id="${s.id}">Eliminar</button>
@@ -403,24 +424,24 @@ async function cargarTablaUsuarios() {
     tbody.innerHTML = usuarios.map(u => `
       <tr class="align-middle">
         <td>
-          <strong>${escapeHTML(u.full_name || "Sin nombre")}</strong><br>
+          <strong>${escapeHTML(u.nombre || "Sin nombre")}</strong><br>
           <small class="text-white-50">${escapeHTML(u.email)}</small>
         </td>
         <td>
           <select class="form-select form-select-sm bg-dark text-white border-secondary select-user-role" data-id="${u.id}" style="width: 140px;">
-            <option value="registrado" ${u.role === "registrado" ? "selected" : ""}>Registrado</option>
-            <option value="operador" ${u.role === "operador" ? "selected" : ""}>Operador</option>
-            <option value="admin" ${u.role === "admin" ? "selected" : ""}>Admin</option>
+            <option value="registrado" ${u.rol === "registrado" ? "selected" : ""}>Registrado</option>
+            <option value="operador" ${u.rol === "operador" ? "selected" : ""}>Operador</option>
+            <option value="admin" ${u.rol === "admin" ? "selected" : ""}>Admin</option>
           </select>
         </td>
         <td>
-          ${u.is_blocked ? `<span class="badge bg-danger">Bloqueado</span>` : `<span class="badge bg-success">Activo</span>`}
+          ${u.bloqueado ? `<span class="badge bg-danger">Bloqueado</span>` : `<span class="badge bg-success">Activo</span>`}
         </td>
-        <td class="small text-white-50">${new Date(u.created_at).toLocaleDateString()}</td>
+        <td class="small text-white-50">${new Date(u.creado_en).toLocaleDateString()}</td>
         <td>
           <div class="d-flex gap-2">
-            <button class="btn btn-sm ${u.is_blocked ? 'btn-success' : 'btn-warning'} btn-toggle-block" data-id="${u.id}" data-blocked="${u.is_blocked}">
-              ${u.is_blocked ? "Desbloquear" : "Bloquear"}
+            <button class="btn btn-sm ${u.bloqueado ? 'btn-success' : 'btn-warning'} btn-toggle-block" data-id="${u.id}" data-blocked="${!!u.bloqueado}">
+              ${u.bloqueado ? "Desbloquear" : "Bloquear"}
             </button>
             <button class="btn btn-sm btn-danger btn-delete-user" data-id="${u.id}">Eliminar</button>
           </div>
@@ -493,46 +514,56 @@ function abrirModalProyecto(proyecto = null) {
       <form id="form-admin-proyecto">
         <div class="row g-3 mb-3">
           <div class="col-md-8">
-            <label class="form-label small text-white-50">Título del Proyecto</label>
-            <input type="text" id="proy-title" class="form-control custom-input" value="${escapeHTML(proyecto?.title || '')}" required>
+            <label class="form-label small text-white-50" for="proy-titulo">Título del Proyecto</label>
+            <input type="text" id="proy-titulo" class="form-control custom-input" value="${escapeHTML(proyecto?.titulo || '')}" required>
           </div>
           <div class="col-md-4">
-            <label class="form-label small text-white-50">Slug (URL amigable)</label>
+            <label class="form-label small text-white-50" for="proy-slug">Slug (URL amigable)</label>
             <input type="text" id="proy-slug" class="form-control custom-input" value="${escapeHTML(proyecto?.slug || '')}" placeholder="ej: mi-proyecto-web" required>
           </div>
         </div>
         <div class="mb-3">
-          <label class="form-label small text-white-50">Descripción Corta</label>
-          <input type="text" id="proy-short" class="form-control custom-input" value="${escapeHTML(proyecto?.short_description || '')}" required>
+          <label class="form-label small text-white-50" for="proy-resumen">Resumen (se ve en la grilla pública)</label>
+          <input type="text" id="proy-resumen" class="form-control custom-input" value="${escapeHTML(proyecto?.resumen || '')}" required>
         </div>
         <div class="mb-3">
-          <label class="form-label small text-white-50">Descripción Completa (Arquitectura & Detalles)</label>
-          <textarea id="proy-full" rows="3" class="form-control custom-input" required>${escapeHTML(proyecto?.full_description || '')}</textarea>
+          <label class="form-label small text-white-50" for="proy-descripcion">Descripción completa (solo para usuarios registrados)</label>
+          <textarea id="proy-descripcion" rows="3" class="form-control custom-input" required>${escapeHTML(proyecto?.descripcion || '')}</textarea>
         </div>
         <div class="row g-3 mb-3">
           <div class="col-md-6">
-            <label class="form-label small text-white-50">Stack Tecnológico (separado por comas)</label>
-            <input type="text" id="proy-tech" class="form-control custom-input" value="${escapeHTML((proyecto?.tech_stack || []).join(', '))}" placeholder="JavaScript, PostgreSQL, GSAP" required>
+            <label class="form-label small text-white-50" for="proy-tecnologias">Tecnologías (separadas por comas)</label>
+            <input type="text" id="proy-tecnologias" class="form-control custom-input" value="${escapeHTML((proyecto?.tecnologias || []).map(t => t.nombre || t).join(', '))}" placeholder="JavaScript, PostgreSQL, Supabase">
+            <small class="text-white-50">Tienen que coincidir con la tabla <code>tecnologias</code>.</small>
           </div>
           <div class="col-md-6">
-            <label class="form-label small text-white-50">Imagen de Portada (Subida o URL)</label>
+            <label class="form-label small text-white-50" for="proy-file">Imagen de portada</label>
             <input type="file" id="proy-file" class="form-control custom-input mb-1" accept="image/*">
-            <input type="url" id="proy-thumb" class="form-control custom-input" value="${escapeHTML(proyecto?.thumbnail_url || '')}" placeholder="https://...">
+            <input type="text" id="proy-portada" class="form-control custom-input" value="${escapeHTML(proyecto?.imagen_portada || '')}" placeholder="proyectos/mi-portada.webp">
+            <small class="text-white-50">Ruta dentro del bucket, no una URL completa.</small>
           </div>
         </div>
         <div class="row g-3 mb-4">
-          <div class="col-md-6">
-            <label class="form-label small text-white-50">URL Repositorio GitHub</label>
-            <input type="url" id="proy-repo" class="form-control custom-input" value="${escapeHTML(proyecto?.repo_url || '')}">
+          <div class="col-md-5">
+            <label class="form-label small text-white-50" for="proy-repo">URL del repositorio</label>
+            <input type="url" id="proy-repo" class="form-control custom-input" value="${escapeHTML(proyecto?.url_repo || '')}">
           </div>
-          <div class="col-md-6">
-            <label class="form-label small text-white-50">URL Demo Desplegada</label>
-            <input type="url" id="proy-demo" class="form-control custom-input" value="${escapeHTML(proyecto?.demo_url || '')}">
+          <div class="col-md-4">
+            <label class="form-label small text-white-50" for="proy-categoria">Categoría</label>
+            <input type="text" id="proy-categoria" class="form-control custom-input" value="${escapeHTML(proyecto?.categoria || '')}" placeholder="Web App">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small text-white-50" for="proy-anio">Año</label>
+            <input type="number" id="proy-anio" class="form-control custom-input" min="2000" max="2100" value="${escapeHTML(String(proyecto?.anio || new Date().getFullYear()))}">
           </div>
         </div>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="proy-publicado" ${proyecto?.publicado !== false ? "checked" : ""}>
+          <label class="form-check-label text-white small" for="proy-publicado">Publicar en el portfolio</label>
+        </div>
         <div class="form-check mb-4">
-          <input class="form-check-input" type="checkbox" id="proy-published" ${proyecto?.published !== false ? "checked" : ""}>
-          <label class="form-check-label text-white small" for="proy-published">Publicar inmediatamente en el portfolio</label>
+          <input class="form-check-input" type="checkbox" id="proy-destacado" ${proyecto?.destacado ? "checked" : ""}>
+          <label class="form-check-label text-white small" for="proy-destacado">Destacado</label>
         </div>
         <div class="d-flex justify-content-end gap-2">
           <button type="submit" class="btn btn-accent-custom" id="btn-save-proy">Guardar Proyecto</button>
@@ -552,32 +583,54 @@ function abrirModalProyecto(proyecto = null) {
       let thumbUrl = document.getElementById("proy-thumb").value;
       const fileInput = document.getElementById("proy-file");
 
+      // `imagen_portada` guarda la RUTA dentro del bucket, no una URL pública.
+      let rutaPortada = document.getElementById("proy-portada").value.trim() || null;
+
       if (fileInput?.files?.length > 0) {
         btn.innerHTML = "Validando firma y subiendo imagen...";
         const uploaded = await uploadImage(fileInput.files[0], "proyectos");
-        thumbUrl = uploaded.url;
+        rutaPortada = uploaded.path;
       }
 
-      const techStack = document.getElementById("proy-tech").value.split(",").map(s => s.trim()).filter(Boolean);
+      const nombresTecnologias = document
+        .getElementById("proy-tecnologias")
+        .value.split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
 
       const payload = {
-        title: document.getElementById("proy-title").value,
+        titulo: document.getElementById("proy-titulo").value,
         slug: document.getElementById("proy-slug").value.toLowerCase().replace(/[^a-z0-9-]/g, "-"),
-        short_description: document.getElementById("proy-short").value,
-        full_description: document.getElementById("proy-full").value,
-        tech_stack: techStack,
-        thumbnail_url: thumbUrl || "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
-        repo_url: document.getElementById("proy-repo").value || null,
-        demo_url: document.getElementById("proy-demo").value || null,
-        published: document.getElementById("proy-published").checked
+        resumen: document.getElementById("proy-resumen").value,
+        descripcion: document.getElementById("proy-descripcion").value,
+        imagen_portada: rutaPortada,
+        url_repo: document.getElementById("proy-repo").value || null,
+        categoria: document.getElementById("proy-categoria").value || null,
+        anio: Number(document.getElementById("proy-anio").value) || null,
+        publicado: document.getElementById("proy-publicado").checked,
+        destacado: document.getElementById("proy-destacado").checked
       };
+
+      let proyectoId = proyecto?.id;
 
       if (isEdit) {
         await ProyectosService.update(proyecto.id, payload);
         Toast.success("Proyecto actualizado correctamente.");
       } else {
-        await ProyectosService.create(payload);
+        const creado = await ProyectosService.create(payload);
+        proyectoId = creado?.id;
         Toast.success("Proyecto creado exitosamente.");
+      }
+
+      // Las tecnologías viven en la tabla puente `proyecto_tecnologias`, no en
+      // una columna del proyecto: se sincronizan aparte.
+      if (proyectoId) {
+        const noEncontradas = await ProyectosService.setTecnologias(proyectoId, nombresTecnologias);
+        if (noEncontradas.length) {
+          Toast.warning(
+            `No existen en la tabla tecnologias: ${noEncontradas.join(", ")}. El resto se guardó.`
+          );
+        }
       }
 
       Modal.close();
@@ -598,21 +651,46 @@ function abrirModalServicio(servicio = null) {
     <div class="text-start">
       <h4 class="fw-bold mb-3">${isEdit ? "Editar Servicio" : "Nuevo Servicio"}</h4>
       <form id="form-admin-servicio">
-        <div class="mb-3">
-          <label class="form-label small text-white-50">Título del Servicio</label>
-          <input type="text" id="serv-title" class="form-control custom-input" value="${escapeHTML(servicio?.title || '')}" required>
+        <div class="row g-3 mb-3">
+          <div class="col-md-8">
+            <label class="form-label small text-white-50" for="serv-titulo">Título del Servicio</label>
+            <input type="text" id="serv-titulo" class="form-control custom-input" value="${escapeHTML(servicio?.titulo || '')}" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label small text-white-50" for="serv-slug">Slug</label>
+            <input type="text" id="serv-slug" class="form-control custom-input" value="${escapeHTML(servicio?.slug || '')}" placeholder="desarrollo-web" required>
+          </div>
         </div>
         <div class="mb-3">
-          <label class="form-label small text-white-50">Descripción</label>
-          <textarea id="serv-desc" rows="3" class="form-control custom-input" required>${escapeHTML(servicio?.description || '')}</textarea>
+          <label class="form-label small text-white-50" for="serv-descripcion">Descripción</label>
+          <textarea id="serv-descripcion" rows="3" class="form-control custom-input" required>${escapeHTML(servicio?.descripcion || '')}</textarea>
         </div>
         <div class="mb-3">
-          <label class="form-label small text-white-50">Icono SVG (código inline)</label>
-          <textarea id="serv-icon" rows="2" class="form-control custom-input font-monospace small" required>${escapeHTML(servicio?.icon_svg || '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6049ea" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>')}</textarea>
+          <label class="form-label small text-white-50" for="serv-icono">Icono</label>
+          <select id="serv-icono" class="form-select custom-input">
+            ${slugsDeIconos()
+              .map(
+                (slug) =>
+                  `<option value="${slug}" ${servicio?.icono === slug ? "selected" : ""}>${slug}</option>`
+              )
+              .join("")}
+          </select>
+          <small class="text-white-50">
+            La base guarda un nombre de icono, no código SVG: el dibujo sale del
+            catálogo en <code>js/data/iconos.js</code>.
+          </small>
         </div>
-        <div class="mb-4">
-          <label class="form-label small text-white-50">Características / Bullets (separados por comas)</label>
-          <input type="text" id="serv-feat" class="form-control custom-input" value="${escapeHTML((servicio?.features || []).join(', '))}" required>
+        <div class="row g-3 mb-4">
+          <div class="col-md-8">
+            <label class="form-label small text-white-50" for="serv-entregables">Entregables (separados por comas)</label>
+            <input type="text" id="serv-entregables" class="form-control custom-input" value="${escapeHTML((servicio?.entregables || []).join(', '))}">
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="serv-activo" ${servicio?.activo !== false ? "checked" : ""}>
+              <label class="form-check-label text-white small" for="serv-activo">Activo</label>
+            </div>
+          </div>
         </div>
         <div class="d-flex justify-content-end gap-2">
           <button type="submit" class="btn btn-accent-custom">Guardar Servicio</button>
@@ -627,11 +705,16 @@ function abrirModalServicio(servicio = null) {
     e.preventDefault();
     try {
       const payload = {
-        title: document.getElementById("serv-title").value,
-        description: document.getElementById("serv-desc").value,
-        icon_svg: document.getElementById("serv-icon").value,
-        features: document.getElementById("serv-feat").value.split(",").map(s => s.trim()).filter(Boolean),
-        is_active: true
+        titulo: document.getElementById("serv-titulo").value,
+        slug: document.getElementById("serv-slug").value.toLowerCase().replace(/[^a-z0-9-]/g, "-"),
+        descripcion: document.getElementById("serv-descripcion").value,
+        icono: document.getElementById("serv-icono").value,
+        entregables: document
+          .getElementById("serv-entregables")
+          .value.split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        activo: document.getElementById("serv-activo").checked
       };
 
       if (isEdit) {
@@ -645,7 +728,14 @@ function abrirModalServicio(servicio = null) {
       Modal.close();
       cargarTablaServicios();
     } catch (err) {
-      Toast.error("Error al guardar servicio.");
+      console.error("Error al guardar el servicio:", err);
+      if (err?.code === "42703") {
+        Toast.error(
+          "Falta la columna `entregables`. Corré supabase/AJUSTES_PENDIENTES.sql en el SQL Editor."
+        );
+      } else {
+        Toast.error("No pudimos guardar el servicio.");
+      }
     }
   });
 }

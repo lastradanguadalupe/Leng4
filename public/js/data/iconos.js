@@ -37,3 +37,11 @@ export function iconoSVG(slug, tamano = 24) {
 export function tieneIcono(slug) {
   return Object.prototype.hasOwnProperty.call(ICONOS, slug) && slug !== "_default";
 }
+
+/**
+ * Slugs disponibles, para armar el desplegable del panel de administración.
+ * Deja afuera el icono por defecto, que no es una opción elegible.
+ */
+export function slugsDeIconos() {
+  return Object.keys(ICONOS).filter((slug) => slug !== "_default");
+}

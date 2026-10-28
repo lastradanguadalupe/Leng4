@@ -53,7 +53,8 @@ async function cargarConsultas() {
       else if (c.estado === "en_seguimiento") badgeEstado = "bg-warning text-dark";
       else if (c.estado === "respondida") badgeEstado = "bg-success";
 
-      const fecha = new Date(c.created_at).toLocaleDateString([], {
+      // La columna es `creado_en`: con `created_at` la fecha salía "Invalid Date".
+      const fecha = new Date(c.creado_en).toLocaleDateString([], {
         day: "2-digit",
         month: "short",
         hour: "2-digit",
@@ -94,7 +95,17 @@ async function cargarConsultas() {
 
   } catch (err) {
     console.error("Error cargando consultas:", err);
-    Toast.error("Error al cargar la lista de consultas.");
+    // Antes solo salía un toast y la tabla quedaba con "Cargando consultas..."
+    // para siempre, sin manera de reintentar.
+    container.innerHTML = `
+      <tr><td colspan="6" class="text-center py-4">
+        <div class="text-white-50 mb-2">No pudimos traer las consultas.</div>
+        <button type="button" class="btn btn-sm btn-outline-custom" id="btn-reintentar-consultas">Reintentar</button>
+      </td></tr>`;
+    document
+      .getElementById("btn-reintentar-consultas")
+      ?.addEventListener("click", () => cargarConsultas());
+    Toast.error("No pudimos traer las consultas.");
   }
 }
 
@@ -102,8 +113,14 @@ async function cargarConsultas() {
  * Abre el modal con el detalle completo, historial de respuestas y formulario de envío
  */
 async function abrirModalGestion(consultaId) {
-  selectedConsulta = currentConsultas.find((c) => c.id === consultaId);
-  if (!selectedConsulta) return;
+  // `consultaId` llega del atributo data-id, que siempre es texto, mientras que
+  // `c.id` es un entero de la base. Con `===` nunca coincidían y el botón
+  // "Gestionar" no abría nada.
+  selectedConsulta = currentConsultas.find((c) => String(c.id) === String(consultaId));
+  if (!selectedConsulta) {
+    Toast.error("No encontramos esa consulta. Probá recargar la lista.");
+    return;
+  }
 
   const respuestas = await ConsultasService.getHistorialRespuestas(consultaId);
 
@@ -147,10 +164,15 @@ async function abrirModalGestion(consultaId) {
         ` : respuestas.map(r => `
           <div class="p-2 mb-2 rounded bg-dark border border-secondary small">
             <div class="d-flex justify-content-between text-white-50 mb-1">
-              <span>Atendido por: <strong>${escapeHTML(r.profiles?.full_name || r.destinatario_email)}</strong></span>
-              <span>${new Date(r.created_at).toLocaleString()}</span>
+              <span>Atendido por: <strong>${escapeHTML(r.profiles?.nombre || "Operador")}</strong></span>
+              <span>${new Date(r.creado_en).toLocaleString()}</span>
             </div>
-            <div class="text-white">${escapeHTML(r.mensaje)}</div>
+            <div class="text-white">${escapeHTML(r.cuerpo || "")}</div>
+            ${
+              r.enviado_en
+                ? `<div class="text-white-50 mt-1">Enviado por correo el ${new Date(r.enviado_en).toLocaleString()}</div>`
+                : `<div class="mt-1" style="color: #d9bf5a;">Guardada en el historial, pero el correo no se envió</div>`
+            }
           </div>
         `).join("")}
       </div>
@@ -182,13 +204,20 @@ async function abrirModalGestion(consultaId) {
   // Vincular cambio de estado directo
   const selectEstado = document.getElementById("select-cambiar-estado");
   if (selectEstado) {
+    const ETIQUETAS_ESTADO = {
+      nueva: "Nueva",
+      en_seguimiento: "En seguimiento",
+      respondida: "Respondida"
+    };
+
     selectEstado.addEventListener("change", async () => {
       try {
         await ConsultasService.updateEstado(consultaId, selectEstado.value);
-        Toast.success("Estado actualizado a: " + selectEstado.value);
+        Toast.success(`Estado actualizado a "${ETIQUETAS_ESTADO[selectEstado.value] || selectEstado.value}".`);
         cargarConsultas();
       } catch (err) {
-        Toast.error("Error al actualizar estado.");
+        console.error("Error al actualizar el estado:", err);
+        Toast.error("No pudimos actualizar el estado.");
       }
     });
   }
@@ -206,14 +235,22 @@ async function abrirModalGestion(consultaId) {
         btn.disabled = true;
         btn.innerHTML = "Enviando email...";
 
-        await ConsultasService.responderConsulta({
+        const { correoEnviado } = await ConsultasService.responderConsulta({
           consultaId: selectedConsulta.id,
           destinatarioEmail: selectedConsulta.email,
           asunto: asunto,
           mensaje: mensaje
         });
 
-        Toast.success("Respuesta enviada exitosamente por email.");
+        // No afirmamos que salió el correo si no salió: hoy la Edge Function
+        // reply-contact no está desplegada, así que lo normal es lo segundo.
+        if (correoEnviado) {
+          Toast.success("Respuesta enviada por correo y guardada en el historial.");
+        } else {
+          Toast.warning(
+            "Respuesta guardada en el historial, pero el correo no se envió: falta desplegar la Edge Function."
+          );
+        }
         Modal.close();
         cargarConsultas();
       } catch (err) {

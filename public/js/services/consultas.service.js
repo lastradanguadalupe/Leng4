@@ -1,9 +1,22 @@
 // ==============================================================================
 // public/js/services/consultas.service.js
 // Servicio de Contactos, Cotizaciones y Gestión de Respuestas de Operadores
+//
+// ESQUEMA REAL (verificado probando la API columna por columna):
+//
+//   consultas  -> id, nombre, email, telefono, tipo, asunto, mensaje,
+//                 estado, pais, ciudad, creado_en
+//   respuestas -> id, consulta_id, operador_id, cuerpo, creado_en, enviado_en
+//
+// El código anterior insertaba `profile_id` y `metadata`, dos columnas que NO
+// existen: el formulario de contacto devolvía 400 y no guardaba nada. Además
+// ordenaba por `created_at` (es `creado_en`) y leía la tabla
+// `respuestas_consultas`, que no existe: la real se llama `respuestas` y la
+// columna del texto es `cuerpo`. Por eso el panel del operador no listaba
+// ninguna consulta ni podía registrar respuestas.
 // ==============================================================================
 
-import { supabase, supabaseUrl } from "../core/supabase.js";
+import { supabase } from "../core/supabase.js";
 import { getCurrentUser } from "../core/auth.js";
 import { checkClientRateLimit } from "../core/security.js";
 
@@ -11,7 +24,16 @@ export const ConsultasService = {
   /**
    * Envía una consulta o cotización desde el formulario público
    */
-  async enviarConsulta({ nombre, email, tipo, asunto, mensaje, honeypot = "", geoData = {} }) {
+  async enviarConsulta({
+    nombre,
+    email,
+    tipo,
+    asunto,
+    mensaje,
+    telefono = "",
+    honeypot = "",
+    geoData = {}
+  }) {
     // 1. Anti-spam Rate Limiting
     const rateCheck = checkClientRateLimit("contact_form", 4, 120000);
     if (!rateCheck.allowed) {
@@ -24,49 +46,47 @@ export const ConsultasService = {
       return { status: "success", id: "bot-filtered" };
     }
 
-    const user = getCurrentUser();
-
     // 3. Insertar en base de datos Supabase
-    //    Nota: no se usa .select() a propósito. Un visitante anónimo NO tiene
-    //    permiso SELECT sobre "consultas" (solo staff o el propio remitente),
-    //    y pedir RETURNING provoca: "new row violates row-level security policy".
-    const { error } = await supabase
-      .from("consultas")
-      .insert({
-        profile_id: user?.id || null,
-        nombre: nombre.trim(),
-        email: email.trim().toLowerCase(),
-        tipo: tipo || "general",
-        asunto: asunto.trim(),
-        mensaje: mensaje.trim(),
-        estado: "nueva",
-        pais: geoData.country || null,
-        ciudad: geoData.city || null,
-        metadata: {
-          userAgent: navigator.userAgent,
-          submittedAt: new Date().toISOString()
-        }
-      });
+    //    No se usa .select() a propósito: un visitante anónimo no tiene
+    //    permiso SELECT sobre "consultas", y pedir RETURNING provoca
+    //    "new row violates row-level security policy".
+    const fila = {
+      nombre: nombre.trim(),
+      email: email.trim().toLowerCase(),
+      tipo: tipo || "general",
+      asunto: asunto.trim(),
+      mensaje: mensaje.trim(),
+      estado: "nueva",
+      pais: geoData.country || null,
+      ciudad: geoData.city || null
+    };
+
+    // El formulario de la home todavía no pide teléfono, pero la columna
+    // existe: si algún día se agrega el campo, llega solo.
+    if (telefono && telefono.trim()) {
+      fila.telefono = telefono.trim();
+    }
+
+    const { error } = await supabase.from("consultas").insert(fila);
 
     if (error) {
       console.error("Error al guardar consulta en DB:", error);
       throw error;
     }
 
-    // 4. Invocar Edge Function de notificación por email (si está configurada)
+    // 4. Invocar Edge Function de notificación por email (si está desplegada).
+    //    Hoy `send-email` NO está desplegada en el proyecto: la consulta queda
+    //    guardada igual y el operador la ve en su panel, pero no sale el aviso
+    //    por correo. El fallo se registra sin romperle el envío al visitante.
     try {
-      await supabase.functions.invoke("send-email", {
-        body: {
-          nombre,
-          email,
-          tipo,
-          asunto,
-          mensaje,
-          honeypot
-        }
+      const { error: edgeError } = await supabase.functions.invoke("send-email", {
+        body: { nombre, email, tipo, asunto, mensaje }
       });
+      if (edgeError) {
+        console.warn("Aviso por email no enviado (Edge Function):", edgeError.message);
+      }
     } catch (edgeErr) {
-      console.warn("Aviso: Notificación por Edge Function no enviada:", edgeErr.message);
+      console.warn("Aviso por email no enviado (Edge Function):", edgeErr.message);
     }
 
     return { status: "success" };
@@ -78,8 +98,8 @@ export const ConsultasService = {
   async getConsultas({ tipo = "todos", estado = "todos", busqueda = "" } = {}) {
     let query = supabase
       .from("consultas")
-      .select("*, respuestas_consultas(*)")
-      .order("created_at", { ascending: false });
+      .select("*, respuestas(*)")
+      .order("creado_en", { ascending: false });
 
     if (tipo && tipo !== "todos") {
       query = query.eq("tipo", tipo);
@@ -91,7 +111,9 @@ export const ConsultasService = {
 
     if (busqueda && busqueda.trim()) {
       const term = `%${busqueda.trim()}%`;
-      query = query.or(`nombre.ilike.${term},email.ilike.${term},asunto.ilike.${term},mensaje.ilike.${term}`);
+      query = query.or(
+        `nombre.ilike.${term},email.ilike.${term},asunto.ilike.${term},mensaje.ilike.${term}`
+      );
     }
 
     const { data, error } = await query;
@@ -103,9 +125,10 @@ export const ConsultasService = {
    * Actualiza el estado de una consulta ('nueva', 'en_seguimiento', 'respondida')
    */
   async updateEstado(consultaId, nuevoEstado) {
+    // Sin `updated_at`: esa columna no existe en la tabla real.
     const { data, error } = await supabase
       .from("consultas")
-      .update({ estado: nuevoEstado, updated_at: new Date().toISOString() })
+      .update({ estado: nuevoEstado })
       .eq("id", consultaId)
       .select()
       .single();
@@ -115,57 +138,77 @@ export const ConsultasService = {
   },
 
   /**
-   * Envía una respuesta por email desde el panel de operador y guarda en el historial
+   * Registra la respuesta del operador y, si la Edge Function está disponible,
+   * la envía por correo.
+   *
+   * `enviado_en` se completa SOLO si el correo salió de verdad. Antes el camino
+   * de respaldo guardaba `enviado_exitosamente: true` aunque no se hubiera
+   * mandado nada, así que el historial decía que el cliente fue contactado
+   * cuando no lo era.
    */
   async responderConsulta({ consultaId, destinatarioEmail, asunto, mensaje }) {
-    // 1. Invocar la Edge Function reply-contact (autenticada con el JWT del operador)
     const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData?.session?.access_token;
-
-    if (!token) {
-      throw new Error("No hay una sesión activa de operador");
+    if (!sessionData?.session?.access_token) {
+      throw new Error("No hay una sesión activa de operador.");
     }
 
-    let edgeResponse;
+    const user = getCurrentUser();
+    if (!user?.id) {
+      throw new Error("No pudimos identificar al operador. Volvé a iniciar sesión.");
+    }
+
+    // 1. Intentar el envío por correo. Si la Edge Function responde bien, ella
+    //    misma guarda la fila en `respuestas` (tiene permisos de admin y es la
+    //    única que sabe si el correo salió), así que acá NO insertamos de
+    //    nuevo: si lo hiciéramos, el historial mostraría la respuesta dos veces.
+    let correoEnviado = false;
+    let guardadoPorLaFuncion = false;
+    let respuesta = null;
+
     try {
-      const res = await supabase.functions.invoke("reply-contact", {
+      const { data, error: edgeError } = await supabase.functions.invoke("reply-contact", {
         body: {
           consulta_id: consultaId,
           destinatario_email: destinatarioEmail,
-          asunto: asunto,
-          mensaje: mensaje
+          asunto,
+          mensaje
         }
       });
-      edgeResponse = res;
+
+      if (edgeError) {
+        console.warn("La Edge Function reply-contact falló:", edgeError.message);
+      } else if (data?.status === "success") {
+        correoEnviado = true;
+        guardadoPorLaFuncion = true;
+        respuesta = data.data || null;
+      }
     } catch (e) {
-      console.warn("Fallo invoke Edge Function, aplicando guardado directo en DB:", e);
+      console.warn("No se pudo invocar reply-contact:", e.message);
     }
 
-    // 2. Si no hay Edge Function disponible o falló la invocación remota, guardar directamente en la tabla
-    if (!edgeResponse || edgeResponse.error) {
-      const user = getCurrentUser();
-      const { data: directResp, error: directError } = await supabase
-        .from("respuestas_consultas")
+    // 2. Camino de respaldo: la función no está desplegada o falló, así que la
+    //    respuesta se guarda desde el cliente, con `enviado_en` en null porque
+    //    el correo no salió.
+    if (!guardadoPorLaFuncion) {
+      const { data, error } = await supabase
+        .from("respuestas")
         .insert({
           consulta_id: consultaId,
           operador_id: user.id,
-          destinatario_email: destinatarioEmail,
-          asunto: asunto,
-          mensaje: mensaje,
-          enviado_exitosamente: true,
-          provider_id: "local_record"
+          cuerpo: mensaje,
+          enviado_en: null
         })
         .select()
         .single();
 
-      if (directError) throw directError;
-
-      // Actualizar estado a 'respondida'
-      await this.updateEstado(consultaId, "respondida");
-      return directResp;
+      if (error) throw error;
+      respuesta = data;
     }
 
-    return edgeResponse.data;
+    // 3. Marcar la consulta como respondida.
+    await this.updateEstado(consultaId, "respondida");
+
+    return { respuesta, correoEnviado };
   },
 
   /**
@@ -173,10 +216,10 @@ export const ConsultasService = {
    */
   async getHistorialRespuestas(consultaId) {
     const { data, error } = await supabase
-      .from("respuestas_consultas")
-      .select("*, profiles:operador_id(full_name, email)")
+      .from("respuestas")
+      .select("*, profiles:operador_id(nombre, email)")
       .eq("consulta_id", consultaId)
-      .order("created_at", { ascending: true });
+      .order("creado_en", { ascending: true });
 
     if (error) throw error;
     return data || [];

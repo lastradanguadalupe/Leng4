@@ -177,31 +177,71 @@ export const Animations = {
    * Contadores numéricos que se activan al llegar al viewport
    */
   initStatCounters() {
-    const counterElements = document.querySelectorAll(".stat-counter-value");
-    if (!counterElements.length) return;
+    // Los contadores con data-dinamico esperan datos de Supabase y se animan
+    // desde home.js con animarContador() cuando llegan.
+    document
+      .querySelectorAll(".stat-counter-value:not([data-dinamico])")
+      .forEach((el) => this.animarContador(el));
+  },
 
-    counterElements.forEach((el) => {
-      const targetVal = parseFloat(el.getAttribute("data-target")) || 0;
-      const decimals = el.getAttribute("data-decimals") ? parseInt(el.getAttribute("data-decimals")) : 0;
-      const suffix = el.getAttribute("data-suffix") || "";
+  /**
+   * Anima un contador de 0 a su data-target al entrar al viewport.
+   */
+  animarContador(el) {
+    const targetVal = parseFloat(el.getAttribute("data-target")) || 0;
+    const decimals = el.getAttribute("data-decimals") ? parseInt(el.getAttribute("data-decimals")) : 0;
+    const suffix = el.getAttribute("data-suffix") || "";
+    const reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      if (window.ScrollTrigger && window.gsap) {
-        const obj = { count: 0 };
-        window.gsap.to(obj, {
-          count: targetVal,
-          duration: 1.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 90%",
-            toggleActions: "play none none none"
-          },
-          onUpdate: () => {
-            el.textContent = obj.count.toFixed(decimals) + suffix;
-          }
+    if (window.ScrollTrigger && window.gsap && !reducido) {
+      const obj = { count: 0 };
+      el.textContent = (0).toFixed(decimals) + suffix;
+      window.gsap.to(obj, {
+        count: targetVal,
+        duration: 1.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 90%",
+          toggleActions: "play none none none"
+        },
+        onUpdate: () => {
+          el.textContent = obj.count.toFixed(decimals) + suffix;
+        }
+      });
+    } else {
+      el.textContent = targetVal.toFixed(decimals) + suffix;
+    }
+  },
+
+  /**
+   * Franja "Cómo trabajamos": la línea de progreso se dibuja al scrollear y
+   * cada paso se enciende cuando la línea lo alcanza.
+   */
+  initProcesoLinea() {
+    const proceso = document.querySelector(".proceso-pasos");
+    if (!proceso) return;
+
+    const pasos = proceso.querySelectorAll(".proceso-paso");
+    const reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!window.gsap || !window.ScrollTrigger || reducido) {
+      proceso.style.setProperty("--progreso", "1");
+      pasos.forEach((p) => p.classList.add("activo"));
+      return;
+    }
+
+    window.ScrollTrigger.create({
+      trigger: proceso,
+      start: "top 70%",
+      end: "bottom 65%",
+      scrub: 0.4,
+      onUpdate: (self) => {
+        proceso.style.setProperty("--progreso", self.progress.toFixed(3));
+        pasos.forEach((p, i) => {
+          const umbral = pasos.length > 1 ? i / (pasos.length - 1) : 0;
+          p.classList.toggle("activo", self.progress >= umbral - 0.02);
         });
-      } else {
-        el.textContent = targetVal + suffix;
       }
     });
   },

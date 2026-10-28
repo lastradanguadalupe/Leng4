@@ -19,6 +19,8 @@ import { supabase } from "../core/supabase.js";
 // Columnas públicas. Se listan explícitamente en lugar de `*` para no
 // depender de que la tabla no cambie y para no traer datos de más.
 const COLUMNAS_PUBLICAS = "id, titulo, slug, descripcion, icono, destacado, orden";
+// `entregables` lo crea AJUSTES_PENDIENTES.sql. Si todavía no existe se reintenta sin ella.
+const COLUMNAS_CON_ENTREGABLES = `${COLUMNAS_PUBLICAS}, entregables`;
 
 export const ServiciosService = {
   /**
@@ -26,16 +28,18 @@ export const ServiciosService = {
    * @param {boolean} soloActivos filtra por `activo = true`
    */
   async getAll(soloActivos = true) {
-    let query = supabase
-      .from("servicios")
-      .select(COLUMNAS_PUBLICAS)
-      .order("orden", { ascending: true });
+    // El panel (soloActivos = false) necesita `activo` para mostrar el estado real.
+    const extra = soloActivos ? "" : ", activo";
+    const consulta = (columnas) => {
+      let query = supabase.from("servicios").select(columnas + extra).order("orden", { ascending: true });
+      if (soloActivos) query = query.eq("activo", true);
+      return query;
+    };
 
-    if (soloActivos) {
-      query = query.eq("activo", true);
+    let { data, error } = await consulta(COLUMNAS_CON_ENTREGABLES);
+    if (error && error.code === "42703") {
+      ({ data, error } = await consulta(COLUMNAS_PUBLICAS));
     }
-
-    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },

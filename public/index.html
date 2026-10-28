@@ -50,6 +50,7 @@
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
             <li class="nav-item"><a class="nav-link" href="#perfil">Perfil</a></li>
             <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+            <li class="nav-item"><a class="nav-link" href="#testimonios">Testimonios</a></li>
             <li class="nav-item"><a class="nav-link" href="#experiencia">Experiencia</a></li>
             <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos &amp; Demos</a></li>
             <li class="nav-item"><a class="nav-link" href="#github">GitHub</a></li>
@@ -79,7 +80,7 @@
           <a href="#contacto" class="btn btn-accent-custom btn-magnetic px-4 py-3">
             <span>Contactame ↗</span>
           </a>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline-custom btn-magnetic px-4 py-3">
+          <a href="https://github.com/lastradanguadalupe" data-social="github" target="_blank" rel="noopener noreferrer" class="btn btn-outline-custom btn-magnetic px-4 py-3">
             <span>Explorar GitHub</span>
           </a>
         </div>
@@ -159,7 +160,7 @@
               Diseñamos e implementamos aplicaciones web modernas de principio a fin: desde el modelado relacional con políticas de seguridad a nivel de fila (RLS) en PostgreSQL, hasta interfaces de usuario reactivas con microinteracciones de máxima precisión estética.
             </p>
             <div class="d-flex gap-3 flex-wrap">
-              <button class="btn btn-outline-custom btn-sm" id="btn-copy-email" data-email="contacto@portfolio.dev">
+              <button class="btn btn-outline-custom btn-sm" id="btn-copy-email" data-email="lastradanguadalupe@gmail.com">
                 📋 Copiar Email
               </button>
               <button class="btn btn-outline-custom btn-sm" id="btn-share-portfolio">
@@ -171,26 +172,26 @@
             <div class="row g-3">
               <div class="col-6">
                 <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
-                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="5" data-suffix="+">0</div>
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="3" data-suffix="+">0</div>
                   <div class="text-white-50 small text-uppercase">Años de Experiencia</div>
                 </div>
               </div>
-              <div class="col-6">
+              <div class="col-6" data-contador>
                 <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
-                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="28" data-suffix="+">0</div>
-                  <div class="text-white-50 small text-uppercase">Proyectos Desplegados</div>
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" id="perfil-proyectos" data-dinamico data-target="0">0</div>
+                  <div class="text-white-50 small text-uppercase">Proyectos Publicados</div>
                 </div>
               </div>
               <div class="col-6">
                 <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
-                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="99.9" data-decimals="1" data-suffix="%">0</div>
-                  <div class="text-white-50 small text-uppercase">Uptime &amp; Confiabilidad</div>
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="8">0</div>
+                  <div class="text-white-50 small text-uppercase">Servicios Ofrecidos</div>
                 </div>
               </div>
               <div class="col-6">
                 <div class="p-4 rounded border border-secondary" style="background: var(--color-surface-card);">
-                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="150" data-suffix="k+">0</div>
-                  <div class="text-white-50 small text-uppercase">Líneas de Código Testeadas</div>
+                  <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" data-target="4">0</div>
+                  <div class="text-white-50 small text-uppercase">Roles de Acceso</div>
                 </div>
               </div>
             </div>
@@ -212,6 +213,76 @@
       </div>
     </section>
 
+    <!-- SECCIÓN TESTIMONIOS -->
+    <section class="section-wrapper" id="testimonios">
+      <div class="container">
+        <div class="section-header-reveal text-center mb-5">
+          <span class="section-tag">Testimonios</span>
+          <h2 class="fw-bold">Lo que dicen quienes ya trabajaron con nosotros</h2>
+        </div>
+      </div>
+      <div class="testimonios-marquesina" id="testimonios-marquesina" role="region" aria-label="Testimonios de clientes">
+        <!-- Renderizado dinámico desde Supabase -->
+      </div>
+      <div class="container">
+        <div class="row g-3 justify-content-center mt-4 testimonios-contadores">
+          <div class="col-6 col-md-3" data-contador>
+            <div class="testimonios-contador">
+              <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" id="contador-proyectos" data-dinamico data-target="0" data-suffix="">0</div>
+              <div class="text-white-50 small text-uppercase">Proyectos entregados</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3" data-contador>
+            <div class="testimonios-contador">
+              <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" id="contador-clientes" data-dinamico data-target="0" data-suffix="">0</div>
+              <div class="text-white-50 small text-uppercase">Clientes satisfechos</div>
+            </div>
+          </div>
+          <div class="col-12 col-md-3" data-contador>
+            <div class="testimonios-contador">
+              <div class="stat-counter-value fs-1 fw-bold text-accent-gradient" id="contador-anios" data-dinamico data-target="0" data-suffix="+">0</div>
+              <div class="text-white-50 small text-uppercase">Años de experiencia</div>
+            </div>
+          </div>
+        </div>
+        <p class="testimonios-aviso text-center mb-0">
+          Los testimonios son ilustrativos: se redactaron para este trabajo académico y no corresponden a clientes reales.
+        </p>
+      </div>
+    </section>
+
+    <!-- FRANJA CÓMO TRABAJAMOS -->
+    <section class="section-wrapper" id="como-trabajamos">
+      <div class="container">
+        <div class="section-header-reveal text-center mb-5">
+          <span class="section-tag">Proceso</span>
+          <h2 class="fw-bold">Cómo trabajamos</h2>
+        </div>
+        <ol class="proceso-pasos list-unstyled">
+          <li class="proceso-paso">
+            <span class="proceso-numero">01</span>
+            <h3 class="proceso-titulo">Descubrimiento</h3>
+            <p>Entendemos el problema, a quién va dirigido y qué tiene que lograr el proyecto.</p>
+          </li>
+          <li class="proceso-paso">
+            <span class="proceso-numero">02</span>
+            <h3 class="proceso-titulo">Diseño y prototipo</h3>
+            <p>Bocetamos las pantallas y armamos un prototipo navegable para validar antes de programar.</p>
+          </li>
+          <li class="proceso-paso">
+            <span class="proceso-numero">03</span>
+            <h3 class="proceso-titulo">Desarrollo iterativo</h3>
+            <p>Construimos en ciclos cortos con entregas parciales para que veas avances reales.</p>
+          </li>
+          <li class="proceso-paso">
+            <span class="proceso-numero">04</span>
+            <h3 class="proceso-titulo">Entrega y soporte</h3>
+            <p>Publicamos, documentamos y quedamos disponibles para ajustes después del lanzamiento.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
     <!-- SECCIÓN EXPERIENCIA / TIMELINE -->
     <section class="section-wrapper" id="experiencia">
       <div class="container">
@@ -225,30 +296,33 @@
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="timeline-content-card">
-              <span class="badge badge-accent mb-2">2024 - Presente</span>
-              <h4 class="fw-bold text-white mb-1">Senior Fullstack Architect</h4>
-              <p class="text-white-50 mb-0">Liderazgo técnico en plataformas SaaS multi-inquilino. Implementación de esquemas distribuidos con Supabase, Edge Functions y optimización de latencias globales.</p>
+              <span class="badge badge-accent mb-2">2026 - Presente</span>
+              <h4 class="fw-bold text-white mb-1">Desarrollo Fullstack a Medida</h4>
+              <p class="text-white-50 mb-0">Sitios y sistemas para pequeños negocios sobre Supabase y PostgreSQL: autenticación por roles, panel de gestión, Edge Functions para correos y despliegue en Vercel.</p>
             </div>
           </div>
 
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="timeline-content-card">
-              <span class="badge badge-accent mb-2">2022 - 2024</span>
-              <h4 class="fw-bold text-white mb-1">Frontend Engineer &amp; Creative Developer</h4>
-              <p class="text-white-50 mb-0">Desarrollo de interfaces inmersivas con animaciones GSAP y WebGL para clientes internacionales en comercio electrónico y finanzas descentralizadas.</p>
+              <span class="badge badge-accent mb-2">2025</span>
+              <h4 class="fw-bold text-white mb-1">APIs, Catálogos y Bases de Datos</h4>
+              <p class="text-white-50 mb-0">API REST con stock por sucursal y movimientos auditados, y un catálogo mayorista con precios por tipo de cliente. Modelado relacional y políticas de seguridad por fila.</p>
             </div>
           </div>
 
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="timeline-content-card">
-              <span class="badge badge-accent mb-2">2020 - 2022</span>
-              <h4 class="fw-bold text-white mb-1">Backend &amp; Database Developer</h4>
-              <p class="text-white-50 mb-0">Construcción y modelado de APIs RESTful en Node.js, procedimientos almacenados y optimización de índices en bases de datos relacionales PostgreSQL.</p>
+              <span class="badge badge-accent mb-2">2024</span>
+              <h4 class="fw-bold text-white mb-1">Primeros Proyectos Web</h4>
+              <p class="text-white-50 mb-0">Una landing con animaciones GSAP para un estudio de arquitectura y una intranet de reportes con exportación a CSV para una cooperativa.</p>
             </div>
           </div>
         </div>
+        <p class="testimonios-aviso text-center mb-0">
+          La trayectoria y las cifras del perfil son ilustrativas: se redactaron para este trabajo académico.
+        </p>
       </div>
     </section>
 
@@ -358,16 +432,16 @@
           <p class="footer-tagline" data-brand-tagline>Desarrollo web fullstack a medida</p>
 
           <div class="footer-socials">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="GitHub">
+            <a href="https://github.com/lastradanguadalupe" data-social="github" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="GitHub">
               <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.07-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A7.995 7.995 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="LinkedIn">
+            <a href="#" data-social="linkedin" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="LinkedIn">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Instagram">
+            <a href="#" data-social="instagram" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Instagram">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
             </a>
-            <a href="mailto:contacto@portfolio.dev" class="footer-social-link" aria-label="Enviar un email">
+            <a href="mailto:lastradanguadalupe@gmail.com" data-social="email" class="footer-social-link" aria-label="Enviar un email">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 4h21A1.5 1.5 0 0 1 24 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-21A1.5 1.5 0 0 1 0 18.5v-13A1.5 1.5 0 0 1 1.5 4Zm.5 2.2V7l10 6.2L22 7v-.8H2Zm20 3.1-9.47 5.87a1 1 0 0 1-1.06 0L2 9.3v8.5h20V9.3Z"/></svg>
             </a>
           </div>
@@ -385,6 +459,7 @@
             <li><a href="#hero">Inicio</a></li>
             <li><a href="#perfil">Perfil</a></li>
             <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#testimonios">Testimonios</a></li>
             <li><a href="#experiencia">Experiencia</a></li>
             <li><a href="#proyectos">Proyectos &amp; Demos</a></li>
             <li><a href="#contacto">Contacto</a></li>
@@ -398,7 +473,7 @@
             <li><a href="/login.html">Acceder</a></li>
             <li><a href="/login.html#registro">Registrarse</a></li>
             <li><a href="/manual.html">Manual de marca</a></li>
-            <li><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+            <li><a href="https://github.com/lastradanguadalupe" data-social="github" target="_blank" rel="noopener noreferrer">GitHub</a></li>
           </ul>
         </div>
 

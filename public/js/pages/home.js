@@ -6,6 +6,7 @@
 import { initAuth, getCurrentUser, onAuthStateChange } from "../core/auth.js";
 import { ServiciosService } from "../services/servicios.service.js";
 import { ProyectosService } from "../services/proyectos.service.js";
+import { TestimoniosService } from "../services/testimonios.service.js";
 import { ConsultasService } from "../services/consultas.service.js";
 import { GithubService } from "../services/github.service.js";
 import { WeatherService } from "../services/weather.service.js";
@@ -23,6 +24,7 @@ import { CookieConsent } from "../components/cookie-consent.js";
 import { supabase } from "../core/supabase.js";
 import { CONFIG } from "../config.js";
 import { iconoSVG } from "../data/iconos.js";
+import { portadaMock } from "../data/portadas.js";
 import "../core/diagnostico.js";
 import { SERVICIOS_RESPALDO, PROYECTOS_RESPALDO } from "../data/contenido-local.js";
 
@@ -51,14 +53,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   CookieConsent.init(medirVisita);
 
   // 4. Cargar contenido dinámico
-  await Promise.all([
+  const [, totalProyectos, totalTestimonios] = await Promise.all([
     cargarServicios(),
     cargarProyectos(),
+    cargarTestimonios(),
     cargarReposGithub()
   ]);
+  iniciarContadoresTestimonios({ proyectos: totalProyectos, testimonios: totalTestimonios });
+  Animations.initProcesoLinea();
 
   // Inicializar tilt 3D tras montar elementos
   init3DTilt();
+  pausarAnimacionesFueraDeVista();
 
   // 5. Vincular formulario de contacto
   initContactForm(geoData);
@@ -71,7 +77,42 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 8. Aviso si un guard de rol nos devolvió a la home
   avisarAccesoDenegado();
+  avisarErrorDeProveedor();
 });
+
+/**
+ * Si el login con Google falla o se cancela, Supabase vuelve a la home con
+ * `#error=...&error_code=...&error_description=...` en el hash.
+ */
+function avisarErrorDeProveedor() {
+  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  if (!hash.get("error")) return;
+
+  const cancelado = (hash.get("error_code") || hash.get("error")) === "access_denied";
+  Toast.error(
+    cancelado
+      ? "Se canceló el inicio de sesión con Google."
+      : "No pudimos iniciar sesión con Google. Intentá de nuevo."
+  );
+  history.replaceState(null, "", window.location.pathname + window.location.search);
+}
+
+/**
+ * Las animaciones infinitas (marquesina, glows, hero) siguen corriendo aunque
+ * no se vean. Se pausan con una clase mientras el elemento está fuera del viewport.
+ */
+function pausarAnimacionesFueraDeVista() {
+  if (!("IntersectionObserver" in window)) return;
+  const observer = new IntersectionObserver(
+    (entradas) => {
+      entradas.forEach((e) => e.target.classList.toggle("fuera-de-vista", !e.isIntersecting));
+    },
+    { rootMargin: "80px" }
+  );
+  document
+    .querySelectorAll(".project-card, .hero-tech-marquee, .hero-visual, .marquee-container, .visitor-live-badge, .lock-icon-glow")
+    .forEach((el) => observer.observe(el));
+}
 
 /**
  * `requireRole` redirige acá con ?acceso=denegado en lugar de usar alert().
@@ -252,6 +293,120 @@ function estadoVacio(mensaje) {
     </div>`;
 }
 
+/** Iniciales (máx. 2) para el avatar generado: nunca se usan fotos de personas. */
+function iniciales(nombre) {
+  return String(nombre || "?")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p.charAt(0).toUpperCase())
+    .join("");
+}
+
+function estrellasHTML(n) {
+  const cantidad = Number(n);
+  if (!Number.isFinite(cantidad) || cantidad < 1) return "";
+  const llenas = Math.min(5, Math.round(cantidad));
+  return `<div class="testimonio-estrellas" role="img" aria-label="${llenas} de 5 estrellas">${"★".repeat(llenas)}<span class="testimonio-estrellas__vacias">${"★".repeat(5 - llenas)}</span></div>`;
+}
+
+function tarjetaTestimonio(t, interactiva) {
+  const cargo = [t.rol_autor, t.empresa].filter(Boolean).join(" · ");
+  return `
+    <figure class="testimonio-card"${interactiva ? ' tabindex="0"' : ""}>
+      ${estrellasHTML(t.estrellas)}
+      <blockquote class="testimonio-texto">${escapeHTML(t.texto || "")}</blockquote>
+      <figcaption class="testimonio-autor">
+        <span class="testimonio-avatar" aria-hidden="true">${escapeHTML(iniciales(t.autor))}</span>
+        <span class="testimonio-datos">
+          <strong>${escapeHTML(t.autor || "")}</strong>
+          <small>${escapeHTML(cargo)}</small>
+        </span>
+        ${t.servicio ? `<span class="badge badge-accent testimonio-chip">${escapeHTML(t.servicio)}</span>` : ""}
+      </figcaption>
+    </figure>`;
+}
+
+/**
+ * Carga los testimonios publicados. Sin contenido de respaldo: si la consulta
+ * falla se muestra el error, nunca testimonios fabricados.
+ * @returns {Promise<number|null>} cantidad real de testimonios, o null si no hay datos
+ */
+async function cargarTestimonios() {
+  const contenedor = document.getElementById("testimonios-marquesina");
+  if (!contenedor) return null;
+
+  contenedor.innerHTML = `<div class="testimonios-skeleton" aria-hidden="true">${'<div class="skeleton-card"></div>'.repeat(3)}</div>`;
+
+  try {
+    const testimonios = await TestimoniosService.getAll();
+
+    if (!testimonios.length) {
+      contenedor.innerHTML = estadoVacio("Todavía no hay testimonios publicados.");
+      return 0;
+    }
+
+    // Dos filas en sentido opuesto: la segunda arranca desplazada para no repetir el orden.
+    const mitad = Math.ceil(testimonios.length / 2);
+    const filas = [testimonios, [...testimonios.slice(mitad), ...testimonios.slice(0, mitad)]];
+
+    contenedor.innerHTML = filas
+      .map(
+        (fila, i) => `
+      <div class="marquee-container testimonios-fila${i === 1 ? " marquee-reverse" : ""}">
+        <div class="marquee-content">${fila.map((t) => tarjetaTestimonio(t, true)).join("")}</div>
+        <div class="marquee-content" aria-hidden="true">${fila.map((t) => tarjetaTestimonio(t, false)).join("")}</div>
+      </div>`
+      )
+      .join("");
+    return testimonios.length;
+  } catch (err) {
+    console.error("Error al cargar testimonios:", err);
+    contenedor.innerHTML = estadoError("No pudimos traer los testimonios en este momento.", "btn-reintentar-testimonios");
+    document.getElementById("btn-reintentar-testimonios")?.addEventListener("click", async () => {
+      const total = await cargarTestimonios();
+      iniciarContadoresTestimonios({ testimonios: total });
+    });
+    return null;
+  }
+}
+
+/**
+ * Los contadores salen de datos reales (proyectos y testimonios publicados) y
+ * de las cifras de experiencia del perfil. Si no hay dato, el contador queda oculto.
+ */
+function iniciarContadoresTestimonios({ proyectos, testimonios }) {
+  const asignar = (id, valor) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!Number.isFinite(valor) || valor <= 0) {
+      el.closest("[data-contador]")?.setAttribute("hidden", "");
+      return;
+    }
+    el.closest("[data-contador]")?.removeAttribute("hidden");
+    el.dataset.target = String(valor);
+    Animations.animarContador(el);
+  };
+
+  asignar("contador-proyectos", proyectos);
+  asignar("perfil-proyectos", proyectos);
+  asignar("contador-clientes", testimonios);
+  const anios = parseFloat(document.querySelector("#perfil .stat-counter-value:not([data-dinamico])")?.dataset.target);
+  asignar("contador-anios", anios);
+}
+
+/** Lista corta de entregables de un servicio; vacía si la base no los trae. */
+function listaEntregables(entregables) {
+  if (!Array.isArray(entregables) || !entregables.length) return '<div class="flex-grow-1"></div>';
+  return `<ul class="service-entregables list-unstyled flex-grow-1 mb-4">${entregables
+    .slice(0, 3)
+    .map(
+      (e) =>
+        `<li class="d-flex align-items-start gap-2"><span class="feature-dot" aria-hidden="true"></span><span>${escapeHTML(e)}</span></li>`
+    )
+    .join("")}</ul>`;
+}
+
 /**
  * Carga los servicios profesionales ofertados desde Supabase.
  * Orden de preferencia: base real -> contenido local de respaldo.
@@ -261,7 +416,7 @@ async function cargarServicios() {
   const container = document.getElementById("servicios-grid");
   if (!container) return;
 
-  container.innerHTML = skeletonGrid(4);
+  container.innerHTML = skeletonGrid(8);
 
   const pintar = (servicios, esRespaldo) => {
     container.innerHTML =
@@ -272,9 +427,10 @@ async function cargarServicios() {
         <div class="service-card card-tilt-3d h-100 p-4 d-flex flex-column">
           <div class="service-icon mb-3">${iconoSVG(s.icono)}</div>
           <h4 class="service-title fw-bold mb-3">${escapeHTML(s.titulo)}</h4>
-          <p class="service-desc text-white-50 mb-4 flex-grow-1">${escapeHTML(s.descripcion || "")}</p>
-          <a href="#contacto" class="btn btn-outline-custom btn-sm align-self-start btn-cotizar"
-             data-servicio="${escapeHTML(s.titulo)}">Cotizar</a>
+          <p class="service-desc text-white-50 mb-3">${escapeHTML(s.descripcion || "")}</p>
+          ${listaEntregables(s.entregables)}
+          <a href="#contacto" class="btn btn-outline-custom btn-sm align-self-start btn-cotizar mt-auto"
+             data-servicio="${escapeHTML(s.titulo)}">Cotizá tu proyecto</a>
         </div>
       </div>`
         )
@@ -338,7 +494,13 @@ function urlPortada(ruta) {
  * —hoy las rutas de `imagen_portada` apuntan a archivos que no se subieron— no
  * tapa nada y se ve el respaldo, sin depender de un `onerror`.
  */
-function portadaProyecto(titulo, rutaImagen) {
+function portadaProyecto(titulo, rutaImagen, slug, categoria) {
+  // Mockup propio en SVG: es la portada y no se pide ninguna imagen a Storage.
+  const mock = portadaMock(slug, categoria);
+  if (mock) {
+    return `<div class="project-thumb project-thumb--mock" role="img" aria-label="Vista esquemática de ${escapeHTML(titulo)}">${mock}</div>`;
+  }
+
   const iniciales = titulo
     .split(/\s+/)
     .slice(0, 2)
@@ -376,7 +538,7 @@ async function cargarProyectos() {
             .map((t) => `<span class="badge badge-tech">${escapeHTML(t.nombre || t)}</span>`)
             .join("");
 
-          const portada = portadaProyecto(p.titulo, p.imagen_portada);
+          const portada = portadaProyecto(p.titulo, p.imagen_portada, p.slug, p.categoria);
 
           return `
         <div class="col-lg-6 reveal-item">
@@ -438,6 +600,7 @@ async function cargarProyectos() {
 
     pintar(proyectos, false);
     vincularAccionesProyectos(container, proyectos);
+    return proyectos.length;
   } catch (err) {
     console.error("Error al cargar proyectos:", err);
 
@@ -540,9 +703,19 @@ async function cargarReposGithub() {
   const container = document.getElementById("github-repos-container");
   if (!container) return;
 
+  container.innerHTML = skeletonGrid(3, "col-md-4", 150);
+
   try {
     const repos = await GithubService.getUserRepositories();
-    if (!repos.length) return;
+
+    // Estado vacío explícito: antes la función hacía `return` y dejaba la
+    // sección con el título y un hueco, sin explicar nada.
+    if (!repos.length) {
+      container.innerHTML = estadoVacio(
+        "No pudimos traer la actividad de GitHub en este momento."
+      );
+      return;
+    }
 
     container.innerHTML = repos.slice(0, 3).map(r => `
       <div class="col-md-4 reveal-item">
@@ -564,6 +737,13 @@ async function cargarReposGithub() {
     `).join("");
   } catch (err) {
     console.warn("No se pudieron renderizar los repositorios de GitHub:", err);
+    container.innerHTML = estadoError(
+      "No pudimos traer la actividad de GitHub.",
+      "btn-reintentar-github"
+    );
+    document
+      .getElementById("btn-reintentar-github")
+      ?.addEventListener("click", cargarReposGithub);
   }
 }
 
@@ -660,7 +840,7 @@ function initShareActions() {
   const copyEmailBtn = document.getElementById("btn-copy-email");
   if (copyEmailBtn) {
     copyEmailBtn.addEventListener("click", async () => {
-      const email = copyEmailBtn.getAttribute("data-email") || "contacto@portfolio.dev";
+      const email = copyEmailBtn.getAttribute("data-email") || "lastradanguadalupe@gmail.com";
       await WeatherService.copyToClipboard(email);
       Toast.success(`Email (${email}) copiado al portapapeles.`);
     });

@@ -104,14 +104,8 @@
 
 /* Latido del glow detrás del visual */
 @keyframes hero-glow-pulse {
-  0%, 100% {
-    opacity: 0.45;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.75;
-    transform: scale(1.08);
-  }
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.75; }
 }
 
 /* Cursor tipeando en la ventana de código */
@@ -121,26 +115,36 @@
   100% { opacity: 1; }
 }
 
-/* Indicador de Pulso Verde/Morado para Estado En Vivo */
+/* Indicador de Pulso Verde/Morado para Estado En Vivo
+   El anillo es un pseudo-elemento que escala y se desvanece (transform + opacity):
+   animar box-shadow repintaba en cada frame. */
 .pulse-indicator {
+  position: relative;
   width: 8px;
   height: 8px;
   background-color: #6049ea;
   border-radius: 50%;
   display: inline-block;
-  box-shadow: 0 0 0 0 rgba(96, 73, 234, 0.7);
+}
+
+.pulse-indicator::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(96, 73, 234, 0.7);
   animation: pulse-ring 2s infinite cubic-bezier(0.66, 0, 0, 1);
+  pointer-events: none;
 }
 
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0 0 0 0 rgba(96, 73, 234, 0.7);
+    transform: scale(1);
+    opacity: 0.7;
   }
-  70% {
-    box-shadow: 0 0 0 8px rgba(96, 73, 234, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(96, 73, 234, 0);
+  70%, 100% {
+    transform: scale(3);
+    opacity: 0;
   }
 }
 
@@ -154,18 +158,27 @@
   border-radius: 50%;
   background: rgba(96, 73, 234, 0.1);
   border: 1px solid rgba(96, 73, 234, 0.4);
+  position: relative;
+  box-shadow: 0 0 15px rgba(96, 73, 234, 0.2);
+}
+
+/* El glow ya viene dibujado en el pseudo-elemento y solo se anima opacity:
+   animar box-shadow repinta en cada frame, opacity la resuelve el compositor. */
+.lock-icon-glow::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid rgba(96, 73, 234, 0.8);
+  box-shadow: 0 0 30px rgba(96, 73, 234, 0.6);
+  opacity: 0;
+  pointer-events: none;
   animation: lock-glow 3s infinite ease-in-out;
 }
 
 @keyframes lock-glow {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(96, 73, 234, 0.2);
-    border-color: rgba(96, 73, 234, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(96, 73, 234, 0.6);
-    border-color: rgba(96, 73, 234, 0.8);
-  }
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
 }
 
 /* Text Gradient Dinámico en H1
@@ -214,6 +227,17 @@
   z-index: 99990;
   opacity: 0.025;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Pausa de animaciones infinitas de lo que está fuera del viewport
+   (la clase la pone un IntersectionObserver en home.js) */
+.fuera-de-vista,
+.fuera-de-vista *,
+.fuera-de-vista *::before,
+.fuera-de-vista *::after,
+.fuera-de-vista::before,
+.fuera-de-vista::after {
+  animation-play-state: paused !important;
 }
 
 /* Respeto a usuarios con preferencia de movimiento reducido */

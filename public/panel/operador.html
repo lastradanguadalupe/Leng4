@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="d-flex gap-2">
-        <a href="/panel/admin.html" class="btn btn-outline-custom btn-sm">⚡ Ir a Panel Admin</a>
+        <a href="/panel/admin.html" id="link-panel-admin" class="btn btn-outline-custom btn-sm" hidden>⚡ Ir a Panel Admin</a>
         <a href="/index.html" class="btn btn-outline-custom btn-sm">Ver Sitio</a>
       </div>
     </div>
@@ -53,8 +53,9 @@
           <select id="filter-estado" class="form-select">
             <option value="todos">Todos los estados</option>
             <option value="nueva">Nuevas</option>
-            <option value="en_seguimiento">En Seguimiento</option>
+            <option value="en_proceso">En Proceso</option>
             <option value="respondida">Respondidas</option>
+            <option value="cerrada">Cerradas</option>
           </select>
         </div>
         <div class="col-md-1 text-md-end">

@@ -3,7 +3,7 @@
 // Panel de Operador: Gestión de Consultas, Filtros y Respuestas por Email
 // ==============================================================================
 
-import { requireRole, initAuth, getCurrentUser } from "../core/auth.js";
+import { requireRole, initAuth, getCurrentUser, isAdmin } from "../core/auth.js";
 import { ConsultasService } from "../services/consultas.service.js";
 import { Toast } from "../components/toast.js";
 import { Modal } from "../components/modal.js";
@@ -21,6 +21,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Validar rol de Operador o Administrador
   const authorized = await requireRole([CONFIG.ROLES.OPERADOR, CONFIG.ROLES.ADMIN]);
   if (!authorized) return;
+
+  // El acceso al panel de admin es solo del rol admin: al operador no se le ofrece.
+  const enlaceAdmin = document.getElementById("link-panel-admin");
+  if (enlaceAdmin) enlaceAdmin.hidden = !isAdmin();
 
   initFilters();
   await cargarConsultas();
@@ -50,7 +54,7 @@ async function cargarConsultas() {
     container.innerHTML = currentConsultas.map((c) => {
       let badgeEstado = "bg-secondary";
       if (c.estado === "nueva") badgeEstado = "bg-primary";
-      else if (c.estado === "en_seguimiento") badgeEstado = "bg-warning text-dark";
+      else if (c.estado === "en_proceso") badgeEstado = "bg-warning text-dark";
       else if (c.estado === "respondida") badgeEstado = "bg-success";
 
       // La columna es `creado_en`: con `created_at` la fecha salía "Invalid Date".
@@ -134,8 +138,9 @@ async function abrirModalGestion(consultaId) {
         <div class="d-flex gap-2">
           <select id="select-cambiar-estado" class="form-select form-select-sm bg-dark text-white border-secondary" style="width: 160px;">
             <option value="nueva" ${selectedConsulta.estado === "nueva" ? "selected" : ""}>Nueva</option>
-            <option value="en_seguimiento" ${selectedConsulta.estado === "en_seguimiento" ? "selected" : ""}>En Seguimiento</option>
+            <option value="en_proceso" ${selectedConsulta.estado === "en_proceso" ? "selected" : ""}>En Proceso</option>
             <option value="respondida" ${selectedConsulta.estado === "respondida" ? "selected" : ""}>Respondida</option>
+            <option value="cerrada" ${selectedConsulta.estado === "cerrada" ? "selected" : ""}>Cerrada</option>
           </select>
         </div>
       </div>
@@ -187,7 +192,7 @@ async function abrirModalGestion(consultaId) {
           </div>
           <div class="mb-3">
             <label class="form-label small text-white-50">Mensaje de respuesta</label>
-            <textarea id="reply-mensaje" rows="4" class="form-control form-control-sm custom-input" placeholder="Escribe tu respuesta aquí..." required></textarea>
+            <textarea id="reply-mensaje" rows="4" class="form-control form-control-sm custom-input" placeholder="Escribe tu respuesta aquí (entre 10 y 5000 caracteres)..." minlength="10" maxlength="5000" required></textarea>
           </div>
           <div class="d-flex justify-content-end gap-2">
             <button type="submit" class="btn btn-accent-custom btn-sm" id="btn-enviar-respuesta">
@@ -206,8 +211,9 @@ async function abrirModalGestion(consultaId) {
   if (selectEstado) {
     const ETIQUETAS_ESTADO = {
       nueva: "Nueva",
-      en_seguimiento: "En seguimiento",
-      respondida: "Respondida"
+      en_proceso: "En proceso",
+      respondida: "Respondida",
+      cerrada: "Cerrada"
     };
 
     selectEstado.addEventListener("change", async () => {
@@ -242,13 +248,13 @@ async function abrirModalGestion(consultaId) {
           mensaje: mensaje
         });
 
-        // No afirmamos que salió el correo si no salió: hoy la Edge Function
-        // reply-contact no está desplegada, así que lo normal es lo segundo.
+        // No afirmamos que salió el correo si no salió (función sin desplegar,
+        // sin RESEND_API_KEY o rechazo de Resend).
         if (correoEnviado) {
           Toast.success("Respuesta enviada por correo y guardada en el historial.");
         } else {
           Toast.warning(
-            "Respuesta guardada en el historial, pero el correo no se envió: falta desplegar la Edge Function."
+            "Respuesta guardada en el historial, pero el correo no se envió. Revisá la Edge Function y la clave de Resend."
           );
         }
         Modal.close();

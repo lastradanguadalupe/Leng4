@@ -55,6 +55,8 @@
    automático que se come todo el espacio libre (343px medidos en 1440x900) y
    dejaba el hueco enorme entre los botones y la marquesina. */
 .hero-section {
+  /* El glow del visual sobresale de su caja; clip evita el scroll horizontal sin crear un contenedor de scroll */
+  overflow-x: clip;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -103,9 +105,9 @@
 .hero-visual::before {
   content: "";
   position: absolute;
-  inset: 12% 8%;
-  background: radial-gradient(ellipse at center, var(--color-accent-glow) 0%, rgba(96, 73, 234, 0) 70%);
-  filter: blur(42px);
+  /* Gradiente ancho en lugar de filter: blur(42px), que se recalculaba en cada frame */
+  inset: -8% -14%;
+  background: radial-gradient(ellipse at center, var(--color-accent-glow) 0%, rgba(96, 73, 234, 0.12) 38%, rgba(96, 73, 234, 0) 68%);
   z-index: 0;
   animation: hero-glow-pulse 6s ease-in-out infinite;
   pointer-events: none;

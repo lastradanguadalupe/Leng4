@@ -10,14 +10,23 @@ export const GithubService = {
    * Obtiene información del perfil y repositorios públicos
    */
   async getUserRepositories(username = CONFIG.GITHUB_USERNAME) {
-    // Revisar caché en sessionStorage para optimizar rate limits de GitHub
+    // Revisar caché en sessionStorage para optimizar rate limits de GitHub.
+    //
+    // Importante: NO se usa la caché si está vacía. Antes, si una consulta
+    // devolvía [] (por ejemplo porque el usuario configurado no tenía repos
+    // públicos), ese array vacío quedaba guardado y la sección se veía vacía
+    // el resto de la sesión, incluso después de corregir el usuario.
     const cacheKey = `github_repos_${username}`;
     const cached = sessionStorage.getItem(cacheKey);
     if (cached) {
       try {
-        return JSON.parse(cached);
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+        sessionStorage.removeItem(cacheKey);
       } catch (e) {
-        // Ignorar
+        sessionStorage.removeItem(cacheKey);
       }
     }
 
@@ -46,43 +55,24 @@ export const GithubService = {
         updatedAt: repo.updated_at
       }));
 
-      sessionStorage.setItem(cacheKey, JSON.stringify(cleanRepos));
+      if (cleanRepos.length) {
+        sessionStorage.setItem(cacheKey, JSON.stringify(cleanRepos));
+      }
       return cleanRepos;
     } catch (err) {
-      console.warn("No se pudo cargar desde GitHub API real, usando fallback demostrativo:", err.message);
-      // Fallback creíble
-      return [
-        {
-          id: 101,
-          name: "fullstack-reactive-core",
-          description: "High-throughput microservices architecture with PostgreSQL RLS & Node.js",
-          stars: 48,
-          forks: 12,
-          language: "TypeScript",
-          url: "https://github.com",
-          updatedAt: new Date().toISOString()
-        },
-        {
-          id: 102,
-          name: "gsap-scroll-experience",
-          description: "Production-ready WebGL, Lenis smooth scrolling & 3D tilt interactions",
-          stars: 124,
-          forks: 31,
-          language: "JavaScript",
-          url: "https://github.com",
-          updatedAt: new Date().toISOString()
-        },
-        {
-          id: 103,
-          name: "supabase-auth-guards",
-          description: "Strict role-based access control, edge functions, and telemetry analytics",
-          stars: 89,
-          forks: 19,
-          language: "PLpgSQL",
-          url: "https://github.com",
-          updatedAt: new Date().toISOString()
-        }
-      ];
+      // Sin fallback inventado.
+      //
+      // Antes esto devolvía tres repositorios FICTICIOS ("fullstack-reactive-core",
+      // "gsap-scroll-experience", "supabase-auth-guards") con cantidades de
+      // estrellas y forks inventadas, y la sección los mostraba como
+      // "Actividad Reciente en GitHub · Sincronizado en tiempo real". Es
+      // actividad que no existe, presentada como real: en una entrega que se
+      // evalúa eso es peor que una sección vacía.
+      console.warn(
+        `No se pudieron traer los repositorios de "${username}" desde la API de GitHub:`,
+        err.message
+      );
+      return [];
     }
   }
 };

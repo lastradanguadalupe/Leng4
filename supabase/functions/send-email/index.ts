@@ -72,7 +72,8 @@ serve(async (req: Request) => {
 
     // 3. Sanitización de caracteres peligrosos contra inyecciones
     const cleanNombre = payload.nombre.replace(/[<>]/g, "");
-    const cleanAsunto = payload.asunto.replace(/[<>]/g, "");
+    const cleanAsunto = String(payload.asunto || "Sin asunto").replace(/[<>]/g, "");
+    const tipo = String(payload.tipo || "general").replace(/[^a-z]/gi, "");
     const cleanMensaje = payload.mensaje.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
     // 4. Enviar notificación al dueño del portfolio mediante Resend API
@@ -84,15 +85,15 @@ serve(async (req: Request) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "Portfolio Contact <onboarding@resend.dev>",
+          from: Deno.env.get("RESEND_FROM") || "Portfolio Contact <onboarding@resend.dev>",
           to: [PORTFOLIO_OWNER_EMAIL],
-          reply_to: payload.email,
-          subject: `[Portfolio - ${payload.tipo.toUpperCase()}] ${cleanAsunto}`,
+          reply_to: payload.email.trim(),
+          subject: `[Portfolio - ${tipo.toUpperCase()}] ${cleanAsunto}`,
           html: `
             <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #000000; color: #ffffff; padding: 28px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
               <h2 style="color: #6049ea; margin-top: 0; font-size: 22px;">Nueva Consulta de Contacto</h2>
-              <p style="margin: 8px 0;"><strong>Remitente:</strong> ${cleanNombre} (&lt;${payload.email}&gt;)</p>
-              <p style="margin: 8px 0;"><strong>Tipo:</strong> <span style="background: rgba(96, 73, 234, 0.2); color: #6049ea; padding: 3px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase;">${payload.tipo}</span></p>
+              <p style="margin: 8px 0;"><strong>Remitente:</strong> ${cleanNombre} (&lt;${payload.email.trim().replace(/[<>]/g, "")}&gt;)</p>
+              <p style="margin: 8px 0;"><strong>Tipo:</strong> <span style="background: rgba(96, 73, 234, 0.2); color: #6049ea; padding: 3px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase;">${tipo}</span></p>
               <p style="margin: 8px 0;"><strong>Asunto:</strong> ${cleanAsunto}</p>
               <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;" />
               <div style="background: rgba(255,255,255,0.04); padding: 16px; border-radius: 8px; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">

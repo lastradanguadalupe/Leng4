@@ -122,7 +122,7 @@ export const ConsultasService = {
   },
 
   /**
-   * Actualiza el estado de una consulta ('nueva', 'en_seguimiento', 'respondida')
+   * Actualiza el estado de una consulta ('nueva', 'en_proceso', 'respondida', 'cerrada')
    */
   async updateEstado(consultaId, nuevoEstado) {
     // Sin `updated_at`: esa columna no existe en la tabla real.
@@ -178,7 +178,9 @@ export const ConsultasService = {
       if (edgeError) {
         console.warn("La Edge Function reply-contact falló:", edgeError.message);
       } else if (data?.status === "success") {
-        correoEnviado = true;
+        // La función guarda siempre el historial, pero el correo solo cuenta como
+        // enviado si ella lo confirma (`enviado`) y dejó `enviado_en` con fecha.
+        correoEnviado = data.enviado === true && !!data.data?.enviado_en;
         guardadoPorLaFuncion = true;
         respuesta = data.data || null;
       }
@@ -196,6 +198,9 @@ export const ConsultasService = {
           consulta_id: consultaId,
           operador_id: user.id,
           cuerpo: mensaje,
+          // `enviado_a` es NOT NULL en la tabla real; 'pendiente' = guardada, correo sin salir.
+          enviado_a: destinatarioEmail,
+          estado_envio: "pendiente",
           enviado_en: null
         })
         .select()

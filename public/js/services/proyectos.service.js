@@ -50,9 +50,10 @@ export const ProyectosService = {
    * No pide `descripcion` para no provocar un 401 innecesario.
    */
   async getAll(soloPublicados = true) {
+    // El panel (soloPublicados = false) necesita `publicado` para mostrar el estado real.
     let query = supabase
       .from("proyectos")
-      .select(COLUMNAS_LISTADO)
+      .select(soloPublicados ? COLUMNAS_LISTADO : `${COLUMNAS_LISTADO}, publicado`)
       .order("orden", { ascending: true });
 
     if (soloPublicados) {

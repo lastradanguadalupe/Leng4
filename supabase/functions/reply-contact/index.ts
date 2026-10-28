@@ -74,19 +74,29 @@ serve(async (req: Request) => {
 
     const payload: ReplyPayload = await req.json();
 
-    if (!payload.consulta_id || !payload.destinatario_email || !payload.mensaje || payload.mensaje.trim().length < 5) {
-      return new Response(JSON.stringify({ error: "Campos incompletos o inválidos" }), {
+    // Los límites del cuerpo (10 a 5000) y el formato del destinatario son los CHECK de `respuestas`.
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
+    const largo = payload.mensaje ? payload.mensaje.trim().length : 0;
+    if (!payload.consulta_id || !payload.destinatario_email || !emailRegex.test(payload.destinatario_email.trim())) {
+      return new Response(JSON.stringify({ error: "Faltan la consulta o un correo de destino válido" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (largo < 10 || largo > 5000) {
+      return new Response(JSON.stringify({ error: "La respuesta debe tener entre 10 y 5000 caracteres" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const cleanMensaje = payload.mensaje.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    const cleanAsunto = payload.asunto.replace(/[<>]/g, "");
+    const cleanAsunto = String(payload.asunto || "Respuesta a tu consulta").replace(/[<>]/g, "");
 
     // 2. Enviar email vía Resend
     let emailSuccess = false;
     let providerId = null;
+    let errorDetalle: string | null = null;
 
     if (RESEND_API_KEY) {
       const emailRes = await fetch("https://api.resend.com/emails", {
@@ -96,13 +106,15 @@ serve(async (req: Request) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "Soporte Portfolio <soporte@resend.dev>",
+          // Sin dominio verificado en Resend, el único remitente permitido es onboarding@resend.dev
+          // (y solo entrega a la casilla del dueño de la cuenta de Resend).
+          from: Deno.env.get("RESEND_FROM") || "Portfolio <onboarding@resend.dev>",
           to: [payload.destinatario_email],
           subject: cleanAsunto,
           html: `
             <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #000000; color: #ffffff; padding: 28px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
               <h3 style="color: #6049ea; margin-top: 0;">Respuesta a tu consulta en nuestro Portfolio</h3>
-              <p style="color: rgba(255,255,255,0.7); font-size: 14px;">Atendido por: <strong>${profile.full_name || profile.email}</strong></p>
+              <p style="color: rgba(255,255,255,0.7); font-size: 14px;">Atendido por: <strong>${profile.nombre || profile.email}</strong></p>
               <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 18px 0;" />
               <div style="background: rgba(255,255,255,0.04); padding: 18px; border-radius: 8px; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">
                 ${cleanMensaje}
@@ -120,24 +132,29 @@ serve(async (req: Request) => {
       } else {
         const errText = await emailRes.text();
         console.error("Fallo envío en Resend:", errText);
+        errorDetalle = errText.slice(0, 500);
       }
     } else {
-      console.log("Aviso: Modo simulación de email de operador (sin RESEND_API_KEY).");
-      emailSuccess = true;
-      providerId = "simulated_" + Date.now();
+      // Sin clave no se envía nada: no se marca como enviado (enviado_en queda en null).
+      console.log("Aviso: RESEND_API_KEY no configurada; la respuesta se guarda pero el correo no se envía.");
     }
 
     // 3. Registrar la respuesta en la tabla `respuestas`.
-    //    La tabla real es `respuestas` (id, consulta_id, operador_id, cuerpo,
-    //    creado_en, enviado_en); `respuestas_consultas` no existe, así que
-    //    esta función fallaba con 500 al guardar el historial.
-    //    `enviado_en` se completa solo si el correo salió de verdad.
+    //    La tabla real es `respuestas`, no `respuestas_consultas`. `enviado_a` es
+    //    NOT NULL (sin él el INSERT fallaba con 500) y `estado_envio` es un enum:
+    //    'enviado' si Resend aceptó el correo, 'error' si lo rechazó y 'simulado'
+    //    si no hay RESEND_API_KEY. `enviado_en` se completa solo si salió de verdad.
+    const estadoEnvio = emailSuccess ? "enviado" : RESEND_API_KEY ? "error" : "simulado";
     const { data: respuestaData, error: dbError } = await supabaseAdmin
       .from("respuestas")
       .insert({
         consulta_id: payload.consulta_id,
         operador_id: user.id,
-        cuerpo: payload.mensaje,
+        cuerpo: payload.mensaje.trim(),
+        enviado_a: payload.destinatario_email.trim(),
+        estado_envio: estadoEnvio,
+        proveedor_id: providerId,
+        error_detalle: errorDetalle,
         enviado_en: emailSuccess ? new Date().toISOString() : null,
       })
       .select()
@@ -151,7 +168,8 @@ serve(async (req: Request) => {
       });
     }
 
-    return new Response(JSON.stringify({ status: "success", data: respuestaData }), {
+    // `enviado` dice si el correo salió de verdad; el cliente no debe inferirlo del status.
+    return new Response(JSON.stringify({ status: "success", enviado: emailSuccess, estado_envio: estadoEnvio, provider_id: providerId, data: respuestaData }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

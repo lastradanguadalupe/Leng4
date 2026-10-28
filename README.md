@@ -70,16 +70,18 @@ Para probar los diferentes roles y permisos en la plataforma:
 
 ```
 Leng4/
-├── .env.example                       # Variables de entorno documentadas
 ├── vercel.json                        # Configuración de despliegue y headers de seguridad
 ├── README.md                          # Documentación del proyecto
 ├── supabase/
 │   ├── migrations/
-│   │   ├── 001_initial_schema.sql     # Tablas: profiles, proyectos, demos, servicios, consultas, analytics
-│   │   ├── 002_rls_policies.sql       # Políticas RLS estrictas por rol
-│   │   ├── 003_analytics_rpc.sql      # Funciones RPC en Postgres para gráficos parametrizados
-│   │   └── 004_storage_setup.sql      # Configuración de bucket 'portfolio-assets'
-│   ├── seed.sql                       # Datos iniciales realistas para evaluación
+│   │   ├── 001_tipos_y_tablas.sql     # Extensiones, enums, 16 tablas, columnas identity e índices
+│   │   ├── 002_funciones_y_triggers.sql # Helpers de rol, RPC de analítica y triggers (incl. auth.users)
+│   │   ├── 003_vistas.sql             # proyectos_publicos y storage_huerfanos (security_invoker)
+│   │   ├── 004_rls_y_politicas.sql    # RLS activo y políticas por rol
+│   │   ├── 005_permisos.sql           # GRANT de tablas, columnas (proyectos) y funciones
+│   │   └── 006_storage.sql            # Buckets avatares, publico, galeria y sus políticas
+│   ├── AJUSTES_PENDIENTES.sql         # Parche idempotente para bases creadas antes de estas migraciones
+│   ├── DATOS_SERVICIOS_Y_TESTIMONIOS.sql # Servicios y testimonios ilustrativos
 │   └── functions/
 │       ├── send-email/index.ts        # Edge Function: Notificación de nuevo contacto
 │       └── reply-contact/index.ts     # Edge Function: Respuesta de operador por email
@@ -107,6 +109,12 @@ Leng4/
         ├── animations/                # GSAP, Lenis Smooth Scroll, 3D Tilt
         └── pages/                     # Controladores de página
 ```
+
+---
+
+## 💬 4.a Aviso sobre los testimonios
+
+Los testimonios de la sección "Lo que dicen quienes ya trabajaron con nosotros" son **ilustrativos**: se redactaron para este trabajo académico, con empresas y personas ficticias, y no corresponden a clientes reales. El sitio lo aclara debajo de la sección.
 
 ---
 
@@ -148,27 +156,31 @@ el HTML con `data-brand-name`, `data-brand-tagline` y `data-brand-legal`.
 
 ## 💻 5. Instrucciones de Ejecución Local (Localhost)
 
-1. **Configuración de variables de entorno**:
-   - Copia `.env.example` a `.env`.
-   - Coloca tu `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
+1. **Conexión a Supabase**:
+   - El sitio es estático y no tiene paso de compilación, así que **no usa archivos `.env`**.
+   - La URL del proyecto y la clave `sb_publishable_...` se definen en `public/js/config.js`. La clave publishable es pública por diseño: la seguridad la imponen las políticas RLS de la base.
 
-2. **Ejecución de Migraciones en Supabase**:
-   - En tu proyecto de Supabase, ve a la sección **SQL Editor**.
-   - Ejecuta en orden los archivos de `supabase/migrations/`:
-     - `001_initial_schema.sql`
-     - `002_rls_policies.sql`
-     - `003_analytics_rpc.sql`
-     - `004_storage_setup.sql`
-   - Opcionalmente ejecuta `supabase/seed.sql` para tener proyectos, servicios y métricas de demostración cargadas al instante.
+2. **Base de datos**:
+   - La base real usa nombres de columna en español (`titulo`, `descripcion`, `publicado`, ...).
+   - `supabase/migrations/001..006` reflejan **el esquema real** del proyecto (se generaron leyendo `pg_catalog` de la base en producción). Para levantar una base nueva se ejecutan en orden en **SQL Editor** (o con `supabase db push`) y después `DATOS_SERVICIOS_Y_TESTIMONIOS.sql`.
+   - Sobre una base que ya existe **no hace falta correrlas**: ahí se usa una sola vez `supabase/AJUSTES_PENDIENTES.sql`, aditivo e idempotente.
+   - `005_permisos.sql` empieza con `REVOKE ALL` sobre las tablas y vuelve a conceder lo necesario; no la corras sobre una base con datos sin revisarla antes.
+   - El permiso por columna de `proyectos` (anon no lee `descripcion`, `url_repo` ni `cliente`) está en `005_permisos.sql`.
 
-3. **Iniciar el servidor local**:
+3. **Edge Functions (correos)**:
+   - `supabase functions deploy send-email` y `supabase functions deploy reply-contact`, o pegando el código de cada `index.ts` en **Edge Functions → Via Editor** del dashboard (así se desplegaron). Ambas funciones quedan con "Verify JWT" activado: el formulario pasa esa verificación con la clave publishable, y `reply-contact` además exige una sesión de operador o admin.
+   - Secretos: `supabase secrets set RESEND_API_KEY=...`. Opcionales: `PORTFOLIO_OWNER_EMAIL` (destino del aviso de contacto) y `RESEND_FROM` (remitente).
+   - Sin dominio verificado en Resend, el remitente solo puede ser `onboarding@resend.dev` y los correos solo llegan a la casilla dueña de la cuenta de Resend. Para responder a cualquier remitente hay que verificar un dominio.
+   - Sin `RESEND_API_KEY` la respuesta del operador se guarda en el historial con `enviado_en` en null y el panel avisa que el correo no salió.
+
+4. **Iniciar el servidor local**:
    - Al estar construido en **JavaScript Vanilla con Módulos ES**, no requiere procesos de compilación complejos. Puedes servir la carpeta `public/` con cualquier servidor estático:
      ```bash
      # Con npx serve
      npx serve public -p 3000
 
-     # Con Python
-     python -m http.server 3000 --directory public
+     # Con el servidor de desarrollo del repo (manda Cache-Control: no-store)
+     node .claude/dev-server.mjs
 
      # Con Live Server de VS Code / IDE
      # Clic derecho en public/index.html -> Open with Live Server
@@ -182,7 +194,5 @@ el HTML con `data-brand-name`, `data-brand-tagline` y `data-brand-legal`.
 1. Sube el repositorio a **GitHub**.
 2. Ingresa a [Vercel](https://vercel.com) y selecciona **Add New Project** -> Importa tu repositorio.
 3. En **Root Directory**, selecciona `public` (o deja la raíz ya que `vercel.json` se encarga del enrutamiento).
-4. En **Environment Variables**, define:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
+4. No hace falta definir variables de entorno: la configuración vive en `public/js/config.js`.
 5. Haz clic en **Deploy**. ¡El sitio estará disponible globalmente con certificados SSL y CDN!

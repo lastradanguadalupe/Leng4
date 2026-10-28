@@ -87,6 +87,9 @@ Leng4/
     ├── index.html                     # Landing page principal
     ├── login.html                     # Auth: Login, Registro, Google OAuth, Recuperar
     ├── manual.html                    # Anteproyecto: Manual de Marca / Guía de Estilo (Behance)
+    ├── terminos.html                  # Legal: Términos y condiciones
+    ├── privacidad.html                # Legal: Política de privacidad (Ley 25.326)
+    ├── cookies.html                   # Legal: Política de cookies + gestión del consentimiento
     ├── panel/
     │   ├── admin.html                 # Panel de Administrador
     │   └── operador.html              # Panel de Operador
@@ -104,6 +107,42 @@ Leng4/
         ├── animations/                # GSAP, Lenis Smooth Scroll, 3D Tilt
         └── pages/                     # Controladores de página
 ```
+
+---
+
+## 🏷️ 4.b Nombre de la Marca (pendiente de definición)
+
+El proyecto **todavía no tiene nombre**. Mientras no lo tenga, el sitio muestra
+únicamente el isotipo `✦` en la navbar y en el footer.
+
+Cuando el equipo lo decida, se completa en **un solo lugar**:
+
+```js
+// public/js/core/brand.js
+export const BRAND_NAME = null;   // ← poner acá el nombre, entre comillas
+```
+
+Con eso el nombre aparece automáticamente en la navbar, el footer, el `<title>`
+de cada página y la línea legal. Los elementos que lo reciben están marcados en
+el HTML con `data-brand-name`, `data-brand-tagline` y `data-brand-legal`.
+
+---
+
+## ⚖️ 4.c Páginas Legales y Consentimiento
+
+- **`/terminos`**, **`/privacidad`** y **`/cookies`** (con *rewrites* en `vercel.json`).
+- La Política de privacidad detalla qué datos se recolectan, con qué finalidad,
+  cuánto se conservan y cómo ejercer los derechos de acceso, rectificación y
+  supresión, con mención expresa de la **Ley 25.326** y de la Agencia de Acceso
+  a la Información Pública.
+- Un **banner discreto** pide consentimiento para la analítica. Si la persona
+  **rechaza, no se cuenta la visita**: ni `AnalyticsService.recordVisit()` ni
+  `ProyectosService.recordView()` se ejecutan, y no se crea el identificador de
+  sesión. La preferencia se puede cambiar desde la propia Política de cookies.
+- La dirección IP del visitante **no se almacena**: se guarda un hash SHA-256
+  truncado e irreversible.
+
+> Las tres páginas incluyen un aviso visible de que se trata de un proyecto académico.
 
 ---
 

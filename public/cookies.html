@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es" data-page-title="Política de cookies">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de cookies</title>
+  <meta name="description" content="Qué guardamos en tu navegador, para qué, y cómo cambiar tu preferencia de analítica en cualquier momento.">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236049ea'><circle cx='12' cy='12' r='10'/></svg>">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+  <div class="grain-overlay"></div>
+
+  <header>
+    <nav class="custom-navbar navbar navbar-expand-lg">
+      <div class="container">
+        <a class="navbar-brand fw-bold text-white d-flex align-items-center gap-2" href="/index.html" aria-label="Inicio">
+          <span aria-hidden="true" style="color: var(--color-accent); font-size: 1.4rem; line-height: 1;">✦</span>
+          <span data-brand-name hidden></span>
+        </a>
+        <div class="d-flex align-items-center gap-3 ms-auto">
+          <a class="nav-link" href="/index.html">← Volver al inicio</a>
+          <div id="nav-auth-container" class="d-flex align-items-center gap-2"></div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="legal-page">
+    <div class="container">
+      <div class="legal-content">
+        <span class="section-tag">Legal</span>
+        <h1 class="fw-bold mb-3">Política de cookies</h1>
+        <p class="legal-fecha">Última actualización: 28 de octubre de 2026</p>
+
+        <div class="legal-aviso">
+          <p>
+            <strong>Aviso de proyecto académico.</strong> Este sitio es el Trabajo Práctico Integrador
+            de la materia Lenguajes 4. No usamos cookies publicitarias, ni de redes sociales, ni
+            servicios de seguimiento de terceros como Google Analytics.
+          </p>
+        </div>
+
+        <h2>1. Qué son las cookies y el almacenamiento local</h2>
+        <p>
+          Una cookie es un pequeño archivo de texto que un sitio guarda en tu navegador. El
+          <em>almacenamiento local</em> (<code>localStorage</code>) cumple una función parecida: deja
+          datos guardados en tu dispositivo para que el sitio los lea en visitas posteriores. En
+          ambos casos la información queda en tu equipo, no en un servidor externo.
+        </p>
+
+        <h2>2. Qué guardamos y para qué</h2>
+        <p>Estos son todos los datos que este sitio deja en tu navegador:</p>
+        <ul>
+          <li>
+            <strong>Preferencia de analítica</strong> — <code>consentimiento_analitica</code>.
+            Guarda si aceptaste o rechazaste el conteo de visitas, para no volver a preguntártelo.
+            Es estrictamente necesaria para respetar tu decisión. Persiste hasta que la borres.
+          </li>
+          <li>
+            <strong>Sesión de autenticación</strong> — claves gestionadas por Supabase.
+            Mantienen tu sesión abierta si iniciaste sesión, de modo que no tengas que ingresar tus
+            credenciales en cada página. Son necesarias para el funcionamiento del área privada y se
+            eliminan al cerrar sesión.
+          </li>
+          <li>
+            <strong>Identificador de visita</strong> — <code>portfolio_session_id</code>, guardado
+            en el almacenamiento de sesión (<code>sessionStorage</code>). Sirve para contar una sola
+            visita por sesión de navegación y no inflar las métricas. Se crea <em>únicamente</em> si
+            aceptás la analítica, es un valor aleatorio que no te identifica, no se cruza con tus
+            datos de cuenta y <strong>se borra solo</strong> al cerrar la pestaña.
+          </li>
+        </ul>
+        <p>
+          No usamos cookies de perfilado, de remarketing ni de terceros con fines publicitarios.
+        </p>
+
+        <h2>3. Qué pasa si rechazás</h2>
+        <p>
+          Si rechazás la analítica, el sitio funciona con normalidad: podés navegar, registrarte,
+          enviar consultas y usar las demos. Lo único que cambia es que <strong>tu visita no se
+          registra</strong> en el contador de métricas y no se crea el identificador de visita.
+        </p>
+
+        <h2>4. Cambiar tu preferencia</h2>
+        <p>Podés modificar tu decisión en cualquier momento desde acá:</p>
+        <div class="legal-aviso">
+          <p class="mb-3">
+            <strong>Estado actual:</strong>
+            <span id="consentimiento-estado">Comprobando…</span>
+          </p>
+          <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-accent-custom btn-sm" id="consentimiento-aceptar">
+              Aceptar analítica
+            </button>
+            <button type="button" class="btn btn-outline-custom btn-sm" id="consentimiento-rechazar">
+              Rechazar analítica
+            </button>
+          </div>
+        </div>
+
+        <h2>5. Borrarlas desde tu navegador</h2>
+        <p>
+          También podés eliminar lo que este sitio guardó usando las herramientas de tu navegador.
+          Tené en cuenta que, si borrás el almacenamiento del sitio, perderás la sesión abierta y
+          volveremos a preguntarte por la analítica.
+        </p>
+        <ul>
+          <li><strong>Chrome y Edge:</strong> Configuración → Privacidad y seguridad → Cookies y otros datos de sitios.</li>
+          <li><strong>Firefox:</strong> Ajustes → Privacidad &amp; Seguridad → Cookies y datos del sitio.</li>
+          <li><strong>Safari:</strong> Preferencias → Privacidad → Gestionar datos de sitios web.</li>
+        </ul>
+
+        <h2>6. Recursos externos</h2>
+        <p>
+          El sitio carga bibliotecas y tipografías desde redes de distribución de contenido
+          (jsDelivr, Google Fonts, Simple Icons) y consulta las APIs públicas de GitHub, ipapi.co y
+          Open-Meteo. Esas peticiones no instalan cookies de seguimiento nuestras, pero implican que
+          tu dirección IP sea visible para esos proveedores, como ocurre con cualquier recurso
+          cargado desde internet.
+        </p>
+
+        <h2>7. Más información</h2>
+        <p>
+          El detalle de qué datos tratamos, con qué finalidad y cómo ejercer tus derechos está en la
+          <a href="/privacidad.html">Política de privacidad</a>. Las condiciones generales de uso
+          están en los <a href="/terminos.html">Términos y condiciones</a>.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="custom-footer">
+    <div class="container">
+      <div class="footer-bottom" style="margin-top: 0;">
+        <p class="footer-legal-line" data-brand-legal>
+          © 2026 · Portfolio Desarrollador Fullstack · Trabajo Práctico Integrador Lenguajes 4
+        </p>
+        <button type="button" class="btn-back-to-top" id="btn-back-to-top">
+          <span class="flecha" aria-hidden="true">↑</span>
+          <span>Volver arriba</span>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <div class="cookie-banner" id="cookie-banner" role="region" aria-label="Preferencias de cookies y analítica" hidden>
+    <p class="cookie-banner__texto">
+      Usamos una cookie propia para contar visitas de forma anónima y mejorar el sitio. No compartimos datos con terceros.
+    </p>
+    <div class="cookie-banner__acciones">
+      <button type="button" class="btn btn-outline-custom btn-sm" id="cookie-rechazar">Rechazar</button>
+      <button type="button" class="btn btn-accent-custom btn-sm" id="cookie-aceptar">Aceptar</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="./js/pages/legal.js"></script>
+</body>
+</html>

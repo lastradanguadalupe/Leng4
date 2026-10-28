@@ -5,9 +5,35 @@
 
 import { supabase } from "../core/supabase.js";
 
+/**
+ * Hash SHA-256 irreversible y truncado de la IP del visitante.
+ *
+ * Antes esto era `btoa(ip).substring(0, 16)`, que NO es un hash: base64 es
+ * reversible y una IPv4 entra completa en 16 caracteres, así que la columna
+ * `ip_hash` guardaba la IP recuperable en texto. Eso contradecía la Política
+ * de privacidad, que promete no almacenar la IP.
+ */
+async function hashIp(ip) {
+  if (!ip) return null;
+  try {
+    const datos = new TextEncoder().encode(`portfolio-leng4:${ip}`);
+    const buffer = await crypto.subtle.digest("SHA-256", datos);
+    return Array.from(new Uint8Array(buffer))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("")
+      .substring(0, 16);
+  } catch {
+    // Sin Web Crypto disponible preferimos no mandar nada antes que mandar la IP.
+    return null;
+  }
+}
+
 export const AnalyticsService = {
   /**
-   * Registra una visita (General o Autenticada)
+   * Registra una visita (General o Autenticada).
+   *
+   * Solo debe llamarse si la persona aceptó la analítica: ver
+   * components/cookie-consent.js. Si rechazó, la visita no se cuenta.
    */
   async recordVisit({ path = "/", geoData = {} } = {}) {
     // Generar o recuperar session_id único por sesión de navegador
@@ -21,13 +47,14 @@ export const AnalyticsService = {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const deviceType = isMobile ? "mobile" : "desktop";
     const screenRes = `${window.screen.width}x${window.screen.height}`;
+    const ipHash = await hashIp(geoData.ip);
 
     try {
       const { data, error } = await supabase.rpc("record_visit", {
         p_session_id: sessionId,
         p_page_path: path,
         p_referrer: document.referrer || "directo",
-        p_ip_hash: geoData.ip ? btoa(geoData.ip).substring(0, 16) : null,
+        p_ip_hash: ipHash,
         p_pais: geoData.country || null,
         p_ciudad: geoData.city || null,
         p_user_agent: navigator.userAgent.substring(0, 200),

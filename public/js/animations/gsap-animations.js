@@ -37,6 +37,23 @@ export const Animations = {
     const counterEl = document.getElementById("preloader-percent");
     if (!preloader) return;
 
+    // Red de seguridad: el preloader tapa todo el sitio y solo se oculta desde
+    // el onComplete de una tween. Si el ticker de GSAP no late —pestaña en
+    // segundo plano al cargar, rAF suspendido, un error en otro callback del
+    // ticker— el visitante se queda mirando "0%" para siempre. Pase lo que
+    // pase, a los 2,5s destapamos el sitio.
+    const destapar = () => {
+      if (preloader.dataset.oculto === "1") return;
+      preloader.dataset.oculto = "1";
+      preloader.style.display = "none";
+      this.playHeroSequence();
+    };
+    const failsafe = setTimeout(destapar, 2500);
+    this._destaparPreloader = () => {
+      clearTimeout(failsafe);
+      destapar();
+    };
+
     const countObj = { val: 0 };
     window.gsap.to(countObj, {
       val: 100,
@@ -50,10 +67,7 @@ export const Animations = {
           yPercent: -100,
           duration: 0.8,
           ease: "power4.inOut",
-          onComplete: () => {
-            preloader.style.display = "none";
-            this.playHeroSequence();
-          }
+          onComplete: () => this._destaparPreloader()
         });
       }
     });
@@ -80,37 +94,32 @@ export const Animations = {
   playHeroSequence() {
     if (!window.gsap) return;
 
+    // Los selectores tienen que existir en el DOM o GSAP avisa por consola y
+    // el elemento se queda sin animar. `.hero-welcome-badge` y
+    // `.hero-title-line` no existían: el eyebrow y el H1 nunca entraban.
     const tl = window.gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    tl.fromTo(
-      ".hero-welcome-badge",
-      { opacity: 0, y: -20 },
-      { opacity: 1, y: 0, duration: 0.6 }
-    )
-      .fromTo(
-        ".hero-title-line",
-        { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 0.9, stagger: 0.15 },
-        "-=0.3"
-      )
-      .fromTo(
-        ".hero-subtitle",
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6 },
-        "-=0.4"
-      )
-      .fromTo(
-        ".hero-cta-group .btn",
-        { opacity: 0, scale: 0.9, y: 20 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.5, stagger: 0.1 },
-        "-=0.3"
-      )
-      .fromTo(
-        ".hero-tech-marquee",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.8 },
-        "-=0.2"
-      );
+    const paso = (selector, desde, hasta, posicion) => {
+      if (!document.querySelector(selector)) return;
+      tl.fromTo(selector, desde, hasta, posicion);
+    };
+
+    paso(".hero-eyebrow", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6 });
+    paso(".hero-name", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.9 }, "-=0.3");
+    paso(".hero-subtitle", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, "-=0.5");
+    paso(
+      ".hero-cta-group .btn",
+      { opacity: 0, scale: 0.9, y: 20 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.5, stagger: 0.1 },
+      "-=0.3"
+    );
+    paso(
+      ".hero-visual",
+      { opacity: 0, y: 40 },
+      { opacity: 1, y: 0, duration: 0.8 },
+      "-=0.2"
+    );
+    paso(".hero-tech-marquee", { opacity: 0 }, { opacity: 1, duration: 0.8 }, "-=0.4");
   },
 
   /**

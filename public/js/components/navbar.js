@@ -3,7 +3,7 @@
 // Barra de Navegación Reactiva con Estado de Autenticación y Efectos de Scroll
 // ==============================================================================
 
-import { onAuthStateChange, signOut, getUserRole } from "../core/auth.js";
+import { onAuthStateChange, signOut, leerRol, leerNombre } from "../core/auth.js";
 import { CONFIG } from "../config.js";
 
 export const Navbar = {
@@ -50,9 +50,12 @@ export const Navbar = {
       return;
     }
 
-    const role = profile?.role || CONFIG.ROLES.REGISTRADO;
-    const name = profile?.full_name || user.email.split("@")[0];
-    
+    // La columna real es `rol` y el nombre es `nombre`: con `role`/`full_name`
+    // el badge de Admin/Operador y el nombre nunca aparecían.
+    const role = leerRol(profile);
+    const name = leerNombre(profile, user);
+
+
     let roleBadge = "";
     let panelLink = "";
 

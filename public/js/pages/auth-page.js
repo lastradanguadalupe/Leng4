@@ -102,7 +102,8 @@ function esFlujoDeRecuperacion() {
 
 /** Saca los tokens del hash para que no queden en la barra ni en el historial. */
 function limpiarHashDeTokens() {
-  if (/access_token|refresh_token/.test(window.location.hash)) {
+  const query = new URLSearchParams(window.location.search);
+  if (/access_token|refresh_token/.test(window.location.hash) || query.get("type") === "recovery") {
     history.replaceState(null, "", window.location.pathname + "#nueva-password");
   }
 }

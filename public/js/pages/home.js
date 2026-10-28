@@ -77,7 +77,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 8. Aviso si un guard de rol nos devolvió a la home
   avisarAccesoDenegado();
+  avisarErrorDeProveedor();
 });
+
+/**
+ * Si el login con Google falla o se cancela, Supabase vuelve a la home con
+ * `#error=...&error_code=...&error_description=...` en el hash.
+ */
+function avisarErrorDeProveedor() {
+  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  if (!hash.get("error")) return;
+
+  const cancelado = (hash.get("error_code") || hash.get("error")) === "access_denied";
+  Toast.error(
+    cancelado
+      ? "Se canceló el inicio de sesión con Google."
+      : "No pudimos iniciar sesión con Google. Intentá de nuevo."
+  );
+  history.replaceState(null, "", window.location.pathname + window.location.search);
+}
 
 /**
  * Las animaciones infinitas (marquesina, glows, hero) siguen corriendo aunque

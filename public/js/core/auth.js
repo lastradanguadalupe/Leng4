@@ -5,6 +5,7 @@
 
 import { supabase } from "./supabase.js";
 import { CONFIG } from "../config.js";
+import { Toast } from "../components/toast.js";
 
 // Estado en memoria para cachear el usuario y perfil actual
 let currentUser = null;
@@ -145,8 +146,11 @@ export function traducirErrorAuth(err) {
   if (original.includes("for security purposes") || original.includes("rate limit") || codigo === "over_request_rate_limit") {
     return "Hiciste muchos intentos seguidos. Esperá unos segundos y volvé a probar.";
   }
-  if (original.includes("same password")) {
+  if (original.includes("same password") || original.includes("different from the old password") || codigo === "same_password") {
     return "La contraseña nueva tiene que ser distinta de la anterior.";
+  }
+  if (original.includes("auth session missing") || codigo === "session_not_found") {
+    return "La sesión venció o el enlace ya no es válido. Pedí un enlace nuevo para restablecer la contraseña.";
   }
   if (original.includes("token has expired") || original.includes("invalid token") || codigo === "otp_expired") {
     return "El enlace venció o ya se usó. Pedí uno nuevo.";
@@ -174,7 +178,16 @@ export async function initAuth() {
 
   if (session?.user) {
     currentUser = session.user;
-    await loadCurrentProfile(currentUser.id);
+    // Una cuenta bloqueada no puede romper la carga de la página: loadCurrentProfile
+    // ya cerró la sesión, así que se avisa y la página sigue como visitante.
+    // Antes el error subía hasta el DOMContentLoaded y la home no terminaba de cargar.
+    try {
+      await loadCurrentProfile(currentUser.id);
+    } catch (err) {
+      currentUser = null;
+      currentProfile = null;
+      Toast.error(traducirErrorAuth(err));
+    }
   }
 
   // Listener nativo de Supabase
@@ -182,7 +195,13 @@ export async function initAuth() {
     if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
       currentUser = session?.user || null;
       if (currentUser) {
-        await loadCurrentProfile(currentUser.id);
+        // Sin aviso acá: lo muestra initAuth o el formulario de login, y así no se duplica.
+        try {
+          await loadCurrentProfile(currentUser.id);
+        } catch {
+          currentUser = null;
+          currentProfile = null;
+        }
       }
     } else if (event === "SIGNED_OUT") {
       currentUser = null;
@@ -266,7 +285,10 @@ export async function resetPassword(email) {
     // Apunta a la pantalla donde se DEFINE la contraseña nueva.
     // Antes apuntaba a "#reset-password", que mostraba otra vez el formulario
     // para pedir el enlace: el circuito nunca se podía terminar.
-    redirectTo: window.location.origin + "/login.html#nueva-password"
+    // Va como parámetro de consulta (no como #fragmento): Supabase le agrega los
+    // tokens en el hash, y con un fragmento previo la URL quedaba mal formada y
+    // no se creaba la sesión de recuperación.
+    redirectTo: window.location.origin + "/login.html?type=recovery"
   });
   if (error) throw error;
   return data;

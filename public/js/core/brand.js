@@ -8,6 +8,8 @@
 // solo a la navbar, al footer, al <title> de cada página y a los textos legales.
 // ==============================================================================
 
+import { CONFIG } from "../config.js";
+
 /** Nombre de la marca. null = mostrar solo el isotipo. */
 export const BRAND_NAME = null;
 
@@ -61,4 +63,36 @@ export function applyBrand(doc = document) {
   if (pageTitle) {
     doc.title = BRAND_NAME ? `${BRAND_NAME} | ${pageTitle}` : pageTitle;
   }
+
+  aplicarRedes(doc);
+}
+
+/**
+ * Completa los enlaces marcados con `data-social` desde CONFIG.DEVELOPER_INFO.
+ *
+ * Si un perfil no está definido (null), el enlace se oculta en lugar de
+ * quedar apuntando a "https://instagram.com" a secas, que es un enlace que no
+ * lleva a ninguna parte y queda mal en la entrega.
+ */
+function aplicarRedes(doc = document) {
+  const info = CONFIG.DEVELOPER_INFO || {};
+  const destinos = {
+    github: info.github,
+    linkedin: info.linkedin,
+    instagram: info.instagram,
+    email: info.email ? `mailto:${info.email}` : null
+  };
+
+  doc.querySelectorAll("[data-social]").forEach((el) => {
+    const red = el.getAttribute("data-social");
+    const destino = destinos[red];
+
+    if (destino) {
+      el.setAttribute("href", destino);
+      el.hidden = false;
+    } else {
+      // Sin dato todavía: no mostramos el enlace.
+      el.hidden = true;
+    }
+  });
 }

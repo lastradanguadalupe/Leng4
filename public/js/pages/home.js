@@ -540,9 +540,19 @@ async function cargarReposGithub() {
   const container = document.getElementById("github-repos-container");
   if (!container) return;
 
+  container.innerHTML = skeletonGrid(3, "col-md-4", 150);
+
   try {
     const repos = await GithubService.getUserRepositories();
-    if (!repos.length) return;
+
+    // Estado vacío explícito: antes la función hacía `return` y dejaba la
+    // sección con el título y un hueco, sin explicar nada.
+    if (!repos.length) {
+      container.innerHTML = estadoVacio(
+        "No pudimos traer la actividad de GitHub en este momento."
+      );
+      return;
+    }
 
     container.innerHTML = repos.slice(0, 3).map(r => `
       <div class="col-md-4 reveal-item">
@@ -564,6 +574,13 @@ async function cargarReposGithub() {
     `).join("");
   } catch (err) {
     console.warn("No se pudieron renderizar los repositorios de GitHub:", err);
+    container.innerHTML = estadoError(
+      "No pudimos traer la actividad de GitHub.",
+      "btn-reintentar-github"
+    );
+    document
+      .getElementById("btn-reintentar-github")
+      ?.addEventListener("click", cargarReposGithub);
   }
 }
 
@@ -660,7 +677,7 @@ function initShareActions() {
   const copyEmailBtn = document.getElementById("btn-copy-email");
   if (copyEmailBtn) {
     copyEmailBtn.addEventListener("click", async () => {
-      const email = copyEmailBtn.getAttribute("data-email") || "contacto@portfolio.dev";
+      const email = copyEmailBtn.getAttribute("data-email") || "lastradanguadalupe@gmail.com";
       await WeatherService.copyToClipboard(email);
       Toast.success(`Email (${email}) copiado al portapapeles.`);
     });

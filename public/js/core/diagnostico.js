@@ -191,7 +191,7 @@ export async function diagnosticar() {
   informe.problemas = problemas.length ? problemas : ["Sin problemas detectados."];
 
   // Impresión agrupada y legible
-  console.group("%c🔍 Diagnóstico de conexión", "color:#6049ea;font-weight:bold");
+  console.group("%c🔍 Diagnóstico de conexión", "color:#EA580C;font-weight:bold");
   console.log("Configuración:", informe.configuracion);
   console.log("API:", informe.api);
   console.log("Sesión:", informe.sesion);
@@ -214,6 +214,6 @@ if (esDesarrollo) {
   window.__diag = diagnosticar;
   console.info(
     "%c🔍 Diagnóstico disponible: escribí  await __diag()  en la consola",
-    "color:#6049ea"
+    "color:#EA580C"
   );
 }

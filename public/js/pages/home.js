@@ -727,7 +727,7 @@ async function cargarReposGithub() {
           <p class="repo-desc text-white-50 small mb-3">${escapeHTML(r.description)}</p>
           <div class="d-flex justify-content-between align-items-center text-white-50 small">
             <span class="d-flex align-items-center gap-2">
-              <span class="lang-color-dot" style="background: #6049ea;"></span>
+              <span class="lang-color-dot" style="background: #EA580C;"></span>
               ${escapeHTML(r.language)}
             </span>
             <span>Fork: ${r.forks}</span>

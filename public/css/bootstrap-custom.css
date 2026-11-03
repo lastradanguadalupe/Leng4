@@ -1,6 +1,7 @@
 /* ==============================================================================
    public/css/bootstrap-custom.css
-   Personalización y Overrides de Bootstrap 5 para Estética Dark Minimalist
+   Personalización y Overrides de Bootstrap 5 — Estética Minimal Tech Light
+   Paleta: Fondo #FFFFFF · Superficie #F8FAFC · Grafito #27272A · Naranja #EA580C
    ============================================================================== */
 
 /* Tipografía base */
@@ -9,6 +10,13 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-accent-soft);
+  color: var(--color-text);
 }
 
 /* Headings */
@@ -38,13 +46,19 @@ h3, .h3 {
 
 /* Enlaces */
 a {
-  color: var(--color-accent-light);
+  color: var(--color-accent);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--color-text);
+  color: var(--color-accent-dark);
+}
+
+/* Accesibilidad: foco visible y consistente */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 /* Botones Personalizados */
@@ -54,7 +68,7 @@ a:hover {
   border-radius: var(--border-radius-sm);
   padding: 10px 22px;
   font-size: var(--font-sm);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   transition: all var(--transition-normal);
   display: inline-flex;
   align-items: center;
@@ -62,50 +76,62 @@ a:hover {
   gap: 8px;
 }
 
-.btn:focus, .btn:active {
+.btn:focus, .btn:active, .btn:focus-visible {
   box-shadow: 0 0 0 3px var(--color-accent-glow) !important;
 }
 
-/* Botón Acento Morado */
+/* Botón Acento Naranja */
 .btn-accent-custom {
   background: var(--color-accent);
-  color: #ffffff !important;
+  color: var(--color-white) !important;
   border: 1px solid var(--color-accent);
+  box-shadow: 0 1px 2px rgba(39, 39, 42, 0.08);
 }
 
 .btn-accent-custom:hover {
-  background: var(--color-accent-light);
-  border-color: var(--color-accent-light);
+  background: var(--color-accent-dark);
+  border-color: var(--color-accent-dark);
+  color: var(--color-white) !important;
   box-shadow: var(--shadow-glow);
   transform: translateY(-2px);
 }
 
-/* Botón Outline con Glow */
+/* Botón Outline Claro */
 .btn-outline-custom {
-  background: transparent;
-  color: #ffffff !important;
-  border: 1px solid var(--color-border-subtle);
+  background: var(--color-white);
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border);
 }
 
 .btn-outline-custom:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-accent-subtle);
   border-color: var(--color-accent);
-  color: var(--color-accent-light) !important;
-  box-shadow: 0 0 15px rgba(96, 73, 234, 0.3);
+  color: var(--color-accent-dark) !important;
   transform: translateY(-2px);
 }
 
 /* Botón Bloqueado / Gate */
 .btn-locked-custom {
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.7) !important;
-  border: 1px dashed rgba(96, 73, 234, 0.5);
+  background: var(--color-accent-surface);
+  color: var(--color-accent-dark) !important;
+  border: 1px dashed rgba(234, 88, 12, 0.5);
 }
 
 .btn-locked-custom:hover {
-  background: rgba(96, 73, 234, 0.15);
+  background: var(--color-accent-subtle);
   border-color: var(--color-accent);
-  color: #ffffff !important;
+  color: var(--color-accent-dark) !important;
+}
+
+/* Enlaces tipo botón (pestañas de acceso) */
+.btn-link {
+  color: var(--color-text-secondary) !important;
+  box-shadow: none !important;
+}
+
+.btn-link:hover,
+.btn-link.active {
+  color: var(--color-accent) !important;
 }
 
 /* Tarjetas y Contenedores */
@@ -114,40 +140,87 @@ a:hover {
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--border-radius-md);
   color: var(--color-text);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-soft);
 }
 
 /* Formularios y Inputs */
 .form-control, .form-select {
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--color-border-subtle);
-  color: #ffffff;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
   border-radius: var(--border-radius-sm);
   padding: 12px 16px;
   font-size: var(--font-sm);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.form-control:hover, .form-select:hover {
+  border-color: #D4D4D8;
 }
 
 .form-control:focus, .form-select:focus {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: var(--color-white);
   border-color: var(--color-border-focus);
-  color: #ffffff;
+  color: var(--color-text);
   box-shadow: 0 0 0 3px var(--color-accent-glow);
 }
 
 .form-control::placeholder {
-  color: var(--color-text-dim);
+  color: #A1A1AA;
+}
+
+.form-label {
+  color: var(--color-text-secondary);
+}
+
+.form-select option {
+  background: var(--color-white);
+  color: var(--color-text);
+}
+
+.form-check-input {
+  background-color: var(--color-white);
+  border-color: var(--color-border);
+}
+
+.form-check-input:checked {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.form-check-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-glow);
 }
 
 /* Tablas */
 .table {
+  --bs-table-color: var(--color-text);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--color-border);
   color: var(--color-text);
-  border-color: var(--color-border-subtle);
+  border-color: var(--color-border);
 }
 
-.table-dark {
+.table > :not(caption) > * > * {
   background-color: transparent;
+  border-bottom-color: var(--color-border);
+  color: inherit;
+  box-shadow: none;
+}
+
+/* Admin/operador usan table-dark: se reinterpreta como tabla clara */
+.table-dark {
+  --bs-table-color: var(--color-text);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--color-border);
+  --bs-table-striped-bg: rgba(39, 39, 42, 0.03);
+  --bs-table-striped-color: var(--color-text);
+  --bs-table-hover-bg: var(--color-accent-surface);
+  --bs-table-hover-color: var(--color-text);
+  color: var(--color-text);
+  border-color: var(--color-border);
 }
 
 .table th {
@@ -156,9 +229,229 @@ a:hover {
   font-size: var(--font-xs);
   letter-spacing: 0.05em;
   color: var(--color-text-muted);
-  border-bottom: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .table td {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.table-hover > tbody > tr:hover > * {
+  --bs-table-bg-state: var(--color-accent-surface);
+  color: var(--color-text);
+}
+
+/* Inputs agrupados */
+.input-group-text {
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+/* Dropdowns */
+.dropdown-menu {
+  --bs-dropdown-bg: var(--color-white);
+  --bs-dropdown-color: var(--color-text);
+  --bs-dropdown-border-color: var(--color-border);
+  --bs-dropdown-link-color: var(--color-text-secondary);
+  --bs-dropdown-link-hover-color: var(--color-accent-dark);
+  --bs-dropdown-link-hover-bg: var(--color-accent-surface);
+  --bs-dropdown-link-active-bg: var(--color-accent);
+  --bs-dropdown-link-active-color: var(--color-white);
+  --bs-dropdown-divider-bg: var(--color-border);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+.dropdown-item {
+  color: var(--color-text-secondary);
+  border-radius: var(--border-radius-sm);
+  margin: 0 4px;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: var(--color-accent-surface);
+  color: var(--color-accent-dark);
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.dropdown-divider {
+  border-color: var(--color-border);
+}
+
+.dropdown-menu-dark {
+  --bs-dropdown-bg: var(--color-white);
+  --bs-dropdown-color: var(--color-text);
+  --bs-dropdown-link-color: var(--color-text-secondary);
+  --bs-dropdown-link-hover-color: var(--color-accent-dark);
+  --bs-dropdown-link-hover-bg: var(--color-accent-surface);
+  --bs-dropdown-link-active-bg: var(--color-accent);
+  --bs-dropdown-link-active-color: var(--color-white);
+  --bs-dropdown-border-color: var(--color-border);
+  background: var(--color-white);
+}
+
+.dropdown-menu-dark .dropdown-item {
+  color: var(--color-text-secondary);
+}
+
+.dropdown-menu-dark .dropdown-item:hover,
+.dropdown-menu-dark .dropdown-item:focus {
+  background: var(--color-accent-surface);
+  color: var(--color-accent-dark);
+}
+
+/* Navbar toggler */
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 3px var(--color-accent-glow);
+}
+
+/* Modales Bootstrap (si se usan) */
+.modal-content {
+  background: var(--color-surface-modal);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+.modal-header,
+.modal-footer {
+  border-color: var(--color-border);
+}
+
+.btn-close {
+  filter: none;
+}
+
+/* List groups y acordeones */
+.list-group-item {
+  background: var(--color-white);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.accordion {
+  --bs-accordion-bg: var(--color-white);
+  --bs-accordion-color: var(--color-text);
+  --bs-accordion-border-color: var(--color-border);
+  --bs-accordion-btn-color: var(--color-text);
+  --bs-accordion-active-color: var(--color-accent-dark);
+  --bs-accordion-active-bg: var(--color-accent-surface);
+}
+
+/* Paginación y navegación */
+.page-link {
+  color: var(--color-accent);
+  background: var(--color-white);
+  border-color: var(--color-border);
+}
+
+.page-link:hover {
+  color: var(--color-accent-dark);
+  background: var(--color-accent-surface);
+  border-color: var(--color-accent-soft);
+}
+
+.page-item.active .page-link {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-white);
+}
+
+/* ==============================================================================
+   Overrides de utilidades Bootstrap oscuras
+   Los componentes heredados del diseño anterior usan text-white, text-white-50,
+   bg-dark y border-secondary. Se reinterpretan sobre superficie clara sin tocar
+   el marcado ni la lógica.
+   ============================================================================== */
+
+.text-white {
+  color: var(--color-text) !important;
+}
+
+.text-white-50 {
+  color: var(--color-text-secondary) !important;
+}
+
+.text-accent {
+  color: var(--color-accent) !important;
+}
+
+.text-dark {
+  color: var(--color-text) !important;
+}
+
+.text-muted {
+  color: var(--color-text-muted) !important;
+}
+
+.bg-dark {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text) !important;
+}
+
+.bg-black {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text) !important;
+}
+
+.border-secondary {
+  border-color: var(--color-border) !important;
+}
+
+.border-white {
+  border-color: var(--color-border) !important;
+}
+
+.hr,
+hr {
+  border-color: var(--color-border);
+  opacity: 1;
+}
+
+/* Scrollbar discreto y claro */
+* {
+  scrollbar-color: #D4D4D8 transparent;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4D4D8;
+  border-radius: 999px;
+  border: 2px solid var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A1A1AA;
+}
+
+/* ==============================================================================
+   Filas con gutter grande (g-5)
+   El margen negativo de la fila (--bs-gutter-x: 3rem) supera el padding del
+   .container en pantallas chicas y genera scroll horizontal. Se reduce solo el
+   gutter horizontal en móvil; el vertical y el marcado quedan intactos.
+   ============================================================================== */
+@media (max-width: 767.98px) {
+  .container > .row.g-5,
+  .container > .row.gx-5 {
+    --bs-gutter-x: 1.5rem;
+  }
 }

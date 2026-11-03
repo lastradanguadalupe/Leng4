@@ -156,7 +156,7 @@ async function abrirModalGestion(consultaId) {
         </div>
       </div>
 
-      <div class="p-3 mb-4 rounded" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+      <div class="p-3 mb-4 rounded" style="background: rgba(39, 39, 42, 0.03); border: 1px solid rgba(39, 39, 42, 0.1);">
         <small class="text-white-50 d-block mb-1">Mensaje de la consulta:</small>
         <p class="mb-0 text-white" style="white-space: pre-wrap;">${escapeHTML(selectedConsulta.mensaje)}</p>
       </div>
@@ -176,14 +176,14 @@ async function abrirModalGestion(consultaId) {
             ${
               r.enviado_en
                 ? `<div class="text-white-50 mt-1">Enviado por correo el ${new Date(r.enviado_en).toLocaleString()}</div>`
-                : `<div class="mt-1" style="color: #d9bf5a;">Guardada en el historial, pero el correo no se envió</div>`
+                : `<div class="mt-1" style="color: #B45309;">Guardada en el historial, pero el correo no se envió</div>`
             }
           </div>
         `).join("")}
       </div>
 
       <!-- FORMULARIO DE RESPUESTA POR EMAIL -->
-      <div class="reply-box p-3 rounded" style="background: rgba(96, 73, 234, 0.05); border: 1px solid rgba(96, 73, 234, 0.3);">
+      <div class="reply-box p-3 rounded" style="background: rgba(234, 88, 12, 0.05); border: 1px solid rgba(234, 88, 12, 0.3);">
         <h5 class="fw-bold mb-2">Responder por Correo Electrónico</h5>
         <form id="form-responder-consulta">
           <div class="mb-2">

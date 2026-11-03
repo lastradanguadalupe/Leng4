@@ -23,7 +23,7 @@ export function init3DTilt() {
         width: 100%;
         height: 100%;
         border-radius: inherit;
-        background: radial-gradient(circle 180px at 50% 50%, rgba(255, 255, 255, 0.12), transparent);
+        background: radial-gradient(circle 180px at 50% 50%, rgba(234, 88, 12, 0.1), transparent);
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s ease;
@@ -49,7 +49,7 @@ export function init3DTilt() {
 
       // Mover spotlight specular
       glare.style.opacity = "1";
-      glare.style.background = `radial-gradient(circle 220px at ${x}px ${y}px, rgba(96, 73, 234, 0.22), transparent 70%)`;
+      glare.style.background = `radial-gradient(circle 220px at ${x}px ${y}px, rgba(234, 88, 12, 0.18), transparent 70%)`;
     });
 
     card.addEventListener("mouseleave", () => {

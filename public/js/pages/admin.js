@@ -161,13 +161,13 @@ async function renderTrafficChart(startDate, endDate, groupBy) {
         {
           label: "Visitas Autenticadas",
           data: authVisits.length ? authVisits : [0],
-          backgroundColor: "#6049ea",
+          backgroundColor: "#EA580C",
           borderRadius: 4
         },
         {
           label: "Visitas Anónimas (Generales)",
           data: anonVisits.length ? anonVisits : [0],
-          backgroundColor: "rgba(255, 255, 255, 0.15)",
+          backgroundColor: "rgba(39, 39, 42, 0.18)",
           borderRadius: 4
         }
       ]
@@ -176,11 +176,11 @@ async function renderTrafficChart(startDate, endDate, groupBy) {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        x: { stacked: true, grid: { color: "rgba(255,255,255,0.05)" }, ticks: { color: "#ffffff80" } },
-        y: { stacked: true, grid: { color: "rgba(255,255,255,0.05)" }, ticks: { color: "#ffffff80" } }
+        x: { stacked: true, grid: { color: "rgba(39,39,42,0.08)" }, ticks: { color: "#71717A" } },
+        y: { stacked: true, grid: { color: "rgba(39,39,42,0.08)" }, ticks: { color: "#71717A" } }
       },
       plugins: {
-        legend: { labels: { color: "#ffffff" } }
+        legend: { labels: { color: "#27272A" } }
       }
     }
   });
@@ -203,8 +203,8 @@ async function renderConsultasChart(startDate, endDate) {
       labels: labels.length ? labels : ["General", "Cotización", "Asesoría"],
       datasets: [{
         data: totals.length ? totals : [4, 6, 2],
-        backgroundColor: ["#6049ea", "rgba(96,73,234,0.5)", "#ffffff"],
-        borderColor: "#000000",
+        backgroundColor: ["#EA580C", "rgba(234,88,12,0.5)", "#27272A"],
+        borderColor: "#FFFFFF",
         borderWidth: 2
       }]
     },
@@ -212,7 +212,7 @@ async function renderConsultasChart(startDate, endDate) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: "bottom", labels: { color: "#ffffff" } }
+        legend: { position: "bottom", labels: { color: "#27272A" } }
       }
     }
   });
@@ -236,8 +236,8 @@ async function renderRegistrationsChart(startDate, endDate, groupBy) {
       datasets: [{
         label: "Nuevos Usuarios Registrados",
         data: values.length ? values : [1, 3, 2],
-        borderColor: "#6049ea",
-        backgroundColor: "rgba(96, 73, 234, 0.15)",
+        borderColor: "#EA580C",
+        backgroundColor: "rgba(234, 88, 12, 0.15)",
         fill: true,
         tension: 0.35,
         pointBackgroundColor: "#ffffff"
@@ -247,11 +247,11 @@ async function renderRegistrationsChart(startDate, endDate, groupBy) {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        x: { grid: { color: "rgba(255,255,255,0.05)" }, ticks: { color: "#ffffff80" } },
-        y: { grid: { color: "rgba(255,255,255,0.05)" }, ticks: { color: "#ffffff80", stepSize: 1 } }
+        x: { grid: { color: "rgba(39,39,42,0.08)" }, ticks: { color: "#71717A" } },
+        y: { grid: { color: "rgba(39,39,42,0.08)" }, ticks: { color: "#71717A", stepSize: 1 } }
       },
       plugins: {
-        legend: { labels: { color: "#ffffff" } }
+        legend: { labels: { color: "#27272A" } }
       }
     }
   });
@@ -275,7 +275,7 @@ async function renderTopProjectsChart() {
       datasets: [{
         label: "Vistas Únicas",
         data: views.length ? views : [45, 30],
-        backgroundColor: "#6049ea",
+        backgroundColor: "#EA580C",
         borderRadius: 4
       }]
     },
@@ -284,8 +284,8 @@ async function renderTopProjectsChart() {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        x: { grid: { color: "rgba(255,255,255,0.05)" }, ticks: { color: "#ffffff80" } },
-        y: { grid: { color: "rgba(255,255,255,0.05)" }, ticks: { color: "#ffffff" } }
+        x: { grid: { color: "rgba(39,39,42,0.08)" }, ticks: { color: "#71717A" } },
+        y: { grid: { color: "rgba(39,39,42,0.08)" }, ticks: { color: "#27272A" } }
       },
       plugins: {
         legend: { display: false }
@@ -315,8 +315,8 @@ async function cargarTablaProyectos() {
         <td>
           ${
             p.imagen_portada
-              ? `<img src="${portadaUrl(p.imagen_portada)}" alt="Portada de ${escapeHTML(p.titulo)}" style="width: 56px; height: 36px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);">`
-              : `<div style="width: 56px; height: 36px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(96,73,234,0.15);"></div>`
+              ? `<img src="${portadaUrl(p.imagen_portada)}" alt="Portada de ${escapeHTML(p.titulo)}" style="width: 56px; height: 36px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(39,39,42,0.12);">`
+              : `<div style="width: 56px; height: 36px; border-radius: 4px; border: 1px solid rgba(39,39,42,0.12); background: rgba(234,88,12,0.12);"></div>`
           }
         </td>
         <td>

@@ -48,7 +48,7 @@ export const CustomCursor = {
       height: ${DOT_SIZE}px;
       margin-left: ${-DOT_SIZE / 2}px;
       margin-top: ${-DOT_SIZE / 2}px;
-      background-color: #ffffff;
+      background-color: #27272A;
       border-radius: 50%;
       pointer-events: none;
       z-index: 100000;
@@ -68,8 +68,8 @@ export const CustomCursor = {
       height: ${HALO_SIZE}px;
       margin-left: ${-HALO_SIZE / 2}px;
       margin-top: ${-HALO_SIZE / 2}px;
-      border: 1px solid rgba(96, 73, 234, 0.45);
-      background: radial-gradient(circle, rgba(96, 73, 234, 0.15) 0%, rgba(96, 73, 234, 0) 70%);
+      border: 1px solid rgba(234, 88, 12, 0.45);
+      background: radial-gradient(circle, rgba(234, 88, 12, 0.12) 0%, rgba(234, 88, 12, 0) 70%);
       border-radius: 50%;
       pointer-events: none;
       z-index: 99999;
@@ -169,9 +169,9 @@ export const CustomCursor = {
     this.cursorHalo.style.marginLeft = `${-size / 2}px`;
     this.cursorHalo.style.marginTop = `${-size / 2}px`;
     this.cursorHalo.style.borderColor = activo
-      ? "rgba(96, 73, 234, 0.85)"
-      : "rgba(96, 73, 234, 0.45)";
-    this.cursorDot.style.backgroundColor = activo ? "#6049ea" : "#ffffff";
+      ? "rgba(234, 88, 12, 0.85)"
+      : "rgba(234, 88, 12, 0.45)";
+    this.cursorDot.style.backgroundColor = activo ? "#EA580C" : "#27272A";
   },
 
   initMagneticButtons() {

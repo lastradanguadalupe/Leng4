@@ -5,14 +5,14 @@
 // Cada una es una "captura" esquemática de una ventana de navegador con la
 // interfaz típica del tipo de proyecto. Son abstractas a propósito: barras y
 // bloques en lugar de texto, para no mostrar datos que parezcan reales.
-// Paleta: solo #000000, #ffffff y #6049ea, con opacidad para los derivados.
+// Paleta: grafito, blanco y naranja #EA580C, con opacidad para los derivados.
 //
 // Se eligen por `slug` y, si no hay uno exacto, por `categoria`. Un proyecto
 // sin mockup cae al respaldo de iniciales.
 // ==============================================================================
 
 const B = "rgba(255,255,255,"; // blanco con opacidad
-const P = "rgba(96,73,234,"; // morado con opacidad
+const P = "rgba(234,88,12,"; // naranja con opacidad
 
 /** Marco común: ventana de navegador con barra superior. El contenido va en 64..576 x 88..316. */
 function ventana(contenido) {

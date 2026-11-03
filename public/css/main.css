@@ -1,6 +1,7 @@
 /* ==============================================================================
    public/css/main.css
-   Layout Global, Hero, Timeline de Experiencia y Responsividad
+   Layout Global, Hero, Secciones, Timeline de Experiencia y Responsividad
+   Estética Minimal Tech Light — Blanco, Grafito y Naranja
    ============================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap');
@@ -16,7 +17,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #000000;
+  background-color: var(--color-bg);
   z-index: 999999;
   display: flex;
   flex-direction: column;
@@ -25,11 +26,20 @@
   user-select: none;
 }
 
+.site-preloader::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, var(--color-accent-subtle) 0%, rgba(234, 88, 12, 0) 60%);
+  pointer-events: none;
+}
+
 .preloader-counter {
+  position: relative;
   font-size: clamp(3rem, 10vw, 7rem);
   font-weight: 800;
   letter-spacing: -0.04em;
-  color: #ffffff;
+  color: var(--color-text);
 }
 
 /* Secciones Generales */
@@ -38,12 +48,27 @@
   position: relative;
 }
 
+/* Alternancia de superficies: blanco / gris muy claro */
+#perfil,
+#testimonios,
+#experiencia,
+#github {
+  background-color: var(--color-bg);
+}
+
+#servicios,
+#como-trabajamos,
+#proyectos,
+#contacto {
+  background-color: var(--color-bg-secondary);
+}
+
 .section-tag {
   font-size: var(--font-xs);
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  font-weight: 600;
-  color: var(--color-accent-light);
+  font-weight: 700;
+  color: var(--color-accent);
   display: block;
   margin-bottom: 8px;
 }
@@ -67,6 +92,7 @@
   padding-top: 110px;
   padding-bottom: 32px;
   position: relative;
+  background-color: var(--color-bg);
 }
 
 /* Fallback para navegadores sin unidades svh */
@@ -92,7 +118,7 @@
   color: var(--color-text-muted);
 }
 
-/* ---------- Visual del Hero: ventana de código en glassmorphism ---------- */
+/* ---------- Visual del Hero: ventana de código en grafito ---------- */
 .hero-visual {
   position: relative;
   width: 100%;
@@ -101,13 +127,13 @@
   perspective: 1200px;
 }
 
-/* Glow morado detrás de la tarjeta */
+/* Halo naranja suave detrás de la ventana */
 .hero-visual::before {
   content: "";
   position: absolute;
   /* Gradiente ancho en lugar de filter: blur(42px), que se recalculaba en cada frame */
   inset: -8% -14%;
-  background: radial-gradient(ellipse at center, var(--color-accent-glow) 0%, rgba(96, 73, 234, 0.12) 38%, rgba(96, 73, 234, 0) 68%);
+  background: radial-gradient(ellipse at center, rgba(234, 88, 12, 0.16) 0%, rgba(234, 88, 12, 0.07) 38%, rgba(234, 88, 12, 0) 68%);
   z-index: 0;
   animation: hero-glow-pulse 6s ease-in-out infinite;
   pointer-events: none;
@@ -117,12 +143,10 @@
   position: relative;
   z-index: 1;
   text-align: left;
-  background: rgba(14, 14, 18, 0.72);
-  border: 1px solid var(--color-border-subtle);
+  background: #1F1F23;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--border-radius-lg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: var(--shadow-card), 0 0 40px rgba(96, 73, 234, 0.18);
+  box-shadow: 0 24px 60px rgba(39, 39, 42, 0.22);
   overflow: hidden;
   animation: hero-float 7s ease-in-out infinite;
   /* La variable la escribe el parallax del mouse desde JS */
@@ -135,19 +159,19 @@
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid var(--color-border-subtle);
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .hero-code-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .hero-code-dot:nth-child(3) {
-  background: rgba(96, 73, 234, 0.6);
+  background: var(--color-accent);
 }
 
 .hero-code-filename {
@@ -155,7 +179,7 @@
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-dim);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .hero-code-body {
@@ -164,15 +188,15 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: clamp(0.72rem, 1vw, 0.86rem);
   line-height: 1.85;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.8);
   white-space: pre;
   overflow-x: auto;
 }
 
-.hero-code-body .c-key { color: #b3a6ff; }
-.hero-code-body .c-fn { color: #ffffff; font-weight: 600; }
-.hero-code-body .c-str { color: #8fe3c0; }
-.hero-code-body .c-com { color: rgba(255, 255, 255, 0.3); font-style: italic; }
+.hero-code-body .c-key { color: #FDBA74; }
+.hero-code-body .c-fn { color: #FFFFFF; font-weight: 600; }
+.hero-code-body .c-str { color: #FED7AA; }
+.hero-code-body .c-com { color: rgba(255, 255, 255, 0.5); font-style: italic; }
 
 .hero-code-caret {
   display: inline-block;
@@ -194,13 +218,11 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #ffffff;
-  background: rgba(96, 73, 234, 0.16);
-  border: 1px solid rgba(96, 73, 234, 0.45);
+  color: var(--color-accent-dark);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid var(--color-accent-soft);
   border-radius: 999px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 10px 24px rgba(39, 39, 42, 0.12);
   animation: hero-float 5.5s ease-in-out infinite;
 }
 
@@ -275,13 +297,17 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   max-width: 650px;
 }
 
 .hero-cta-group {
   margin-top: 28px;
   margin-bottom: 0;
+}
+
+.hero-tech-marquee {
+  padding: 6px 0;
 }
 
 /* Timeline de Experiencia */
@@ -296,7 +322,7 @@
   bottom: 0;
   left: 20px;
   width: 2px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--color-border);
 }
 
 @media (min-width: 768px) {
@@ -311,15 +337,20 @@
   margin-bottom: 48px;
 }
 
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
 .timeline-dot {
   position: absolute;
   left: 11px;
-  top: 0;
+  top: 6px;
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #000000;
+  background: var(--color-white);
   border: 2px solid var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.12);
   z-index: 3;
 }
 
@@ -332,10 +363,17 @@
 
 .timeline-content-card {
   background: var(--color-surface-card);
-  border: 1px solid var(--color-border-subtle);
+  border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
   padding: 24px;
   margin-left: 50px;
+  box-shadow: var(--shadow-soft);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-normal);
+}
+
+.timeline-content-card:hover {
+  border-color: var(--color-accent-soft);
+  box-shadow: var(--shadow-card);
 }
 
 @media (min-width: 768px) {
@@ -351,10 +389,25 @@
 
 /* ============================== FOOTER ============================== */
 .custom-footer {
-  border-top: 1px solid var(--color-border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding: 72px 0 24px;
-  background: #000000;
+  background: var(--color-text);
+  color: rgba(255, 255, 255, 0.68);
   position: relative;
+}
+
+/* El footer es la única superficie oscura del sitio: allí las utilidades
+   oscuras originales sí deben verse claras. */
+.custom-footer .text-white {
+  color: var(--color-white) !important;
+}
+
+.custom-footer .text-white-50 {
+  color: rgba(255, 255, 255, 0.66) !important;
+}
+
+.custom-footer .text-accent {
+  color: var(--color-accent-soft) !important;
 }
 
 .footer-grid {
@@ -394,14 +447,14 @@
 .footer-isotipo [data-brand-name] {
   font-size: 1rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .footer-tagline {
   margin: 14px 0 20px;
   max-width: 280px;
   font-size: var(--font-sm);
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.66);
 }
 
 .footer-socials {
@@ -416,17 +469,17 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  border: 1px solid var(--color-border-subtle);
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--color-text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-accent);
   transition: all var(--transition-fast);
 }
 
 .footer-social-link:hover,
 .footer-social-link:focus-visible {
-  color: #ffffff;
+  color: var(--color-white);
   border-color: var(--color-accent);
-  background: rgba(96, 73, 234, 0.14);
+  background: rgba(234, 88, 12, 0.22);
   transform: translateY(-2px);
 }
 
@@ -441,7 +494,7 @@
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-white);
   margin-bottom: 16px;
 }
 
@@ -456,14 +509,14 @@
 
 .footer-links a {
   font-size: var(--font-sm);
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.66);
   text-decoration: none;
   transition: color var(--transition-fast), padding-left var(--transition-fast);
 }
 
 .footer-links a:hover,
 .footer-links a:focus-visible {
-  color: #ffffff;
+  color: var(--color-accent-soft);
   padding-left: 4px;
 }
 
@@ -475,10 +528,20 @@
   min-height: 32px;
 }
 
+.custom-footer .visitor-live-badge {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.custom-footer .visitor-live-badge .text-white-50 {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
 .footer-bottom {
   margin-top: 56px;
   padding-top: 24px;
-  border-top: 1px solid var(--color-border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -488,7 +551,7 @@
 
 .footer-legal-line {
   font-size: var(--font-xs);
-  color: var(--color-text-dim);
+  color: rgba(255, 255, 255, 0.5);
   margin: 0;
 }
 
@@ -501,9 +564,9 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.72);
   background: transparent;
-  border: 1px solid var(--color-border-subtle);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 999px;
   cursor: pointer;
   transition: all var(--transition-normal);
@@ -511,9 +574,9 @@
 
 .btn-back-to-top:hover,
 .btn-back-to-top:focus-visible {
-  color: #ffffff;
+  color: var(--color-white);
   border-color: var(--color-accent);
-  background: rgba(96, 73, 234, 0.12);
+  background: rgba(234, 88, 12, 0.2);
 }
 
 .btn-back-to-top .flecha {
@@ -537,12 +600,10 @@
   gap: 18px;
   flex-wrap: wrap;
   padding: 16px 20px;
-  background: rgba(12, 12, 14, 0.94);
-  border: 1px solid var(--color-border-subtle);
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 20px 50px rgba(39, 39, 42, 0.16);
   transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -555,7 +616,13 @@
   margin: 0;
   font-size: var(--font-xs);
   line-height: 1.6;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
+}
+
+.cookie-banner__texto a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .cookie-banner__acciones {
@@ -580,6 +647,7 @@
 /* ========================= PÁGINAS LEGALES ========================= */
 .legal-page {
   padding: 150px 0 90px;
+  background: var(--color-bg);
 }
 
 .legal-content {
@@ -598,7 +666,7 @@
 
 .legal-content p,
 .legal-content li {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   line-height: 1.8;
   font-size: var(--font-body);
 }
@@ -613,15 +681,21 @@
 }
 
 .legal-content strong {
-  color: #ffffff;
+  color: var(--color-text);
   font-weight: 600;
+}
+
+.legal-content a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .legal-aviso {
   margin-top: 28px;
   padding: 18px 22px;
-  background: rgba(96, 73, 234, 0.08);
-  border: 1px solid rgba(96, 73, 234, 0.25);
+  background: var(--color-accent-surface);
+  border: 1px solid var(--color-accent-soft);
   border-radius: var(--border-radius-md);
 }
 

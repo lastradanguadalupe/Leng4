@@ -58,7 +58,7 @@ export const Modal = {
     const html = `
       <div class="text-center py-4 px-2">
         <div class="lock-icon-glow mb-4">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6049ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
@@ -181,7 +181,7 @@ export const Modal = {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "#6049ea";
+        ctx.fillStyle = "#EA580C";
         ctx.fill();
 
         // Líneas entre partículas cercanas
@@ -192,7 +192,7 @@ export const Modal = {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(96, 73, 234, ${1 - dist2 / 80})`;
+            ctx.strokeStyle = `rgba(234, 88, 12, ${1 - dist2 / 80})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }

@@ -1,6 +1,6 @@
 // ==============================================================================
 // public/js/components/toast.js
-// Sistema de Notificaciones Toast con Estética Dark Minimalist
+// Sistema de Notificaciones Toast con Estética Minimal Tech Light
 // ==============================================================================
 
 export const Toast = {
@@ -30,30 +30,30 @@ export const Toast = {
     toast.className = `toast-item toast-${type}`;
     
     // Paleta de acento según tipo
-    let borderColor = "rgba(96, 73, 234, 0.4)";
+    let borderColor = "rgba(234, 88, 12, 0.3)";
     let icon = "✦";
-    let accentColor = "#6049ea";
+    let accentColor = "#EA580C";
 
     if (type === "success") {
-      borderColor = "rgba(96, 73, 234, 0.8)";
+      borderColor = "rgba(234, 88, 12, 0.55)";
       icon = "✓";
-      accentColor = "#6049ea";
+      accentColor = "#EA580C";
     } else if (type === "error") {
-      borderColor = "rgba(255, 75, 75, 0.6)";
+      borderColor = "rgba(220, 38, 38, 0.4)";
       icon = "✕";
-      accentColor = "#ff4b4b";
+      accentColor = "#DC2626";
     } else if (type === "warning") {
-      borderColor = "rgba(255, 185, 50, 0.6)";
+      borderColor = "rgba(217, 119, 6, 0.4)";
       icon = "⚠";
-      accentColor = "#ffb932";
+      accentColor = "#B45309";
     }
 
     toast.style.cssText = `
-      background: rgba(10, 10, 10, 0.95);
+      background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid ${borderColor};
-      color: #ffffff;
+      color: #27272A;
       padding: 14px 20px;
       border-radius: 10px;
       font-size: 14px;
@@ -61,7 +61,7 @@ export const Toast = {
       display: flex;
       align-items: center;
       gap: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(96, 73, 234, 0.2);
+      box-shadow: 0 10px 30px rgba(39, 39, 42, 0.14);
       transform: translateY(20px);
       opacity: 0;
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
@@ -70,7 +70,7 @@ export const Toast = {
     `;
 
     toast.innerHTML = `
-      <span style="display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.08); color: ${accentColor}; font-weight: bold; font-size: 12px;">${icon}</span>
+      <span style="display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(234, 88, 12, 0.1); color: ${accentColor}; font-weight: bold; font-size: 12px;">${icon}</span>
       <span style="flex: 1; line-height: 1.4;">${message}</span>
     `;
 

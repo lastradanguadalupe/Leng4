@@ -24,9 +24,43 @@ import { CookieConsent } from "../components/cookie-consent.js";
 import { supabase } from "../core/supabase.js";
 import { CONFIG } from "../config.js";
 import { iconoSVG } from "../data/iconos.js";
-import { portadaMock } from "../data/portadas.js";
 import "../core/diagnostico.js";
 import { SERVICIOS_RESPALDO, PROYECTOS_RESPALDO } from "../data/contenido-local.js";
+
+// Portadas locales de los proyectos. Las imágenes viven en public/assets/proyectos
+// para que Vercel las sirva como estáticos (y las cachee con la regla de /assets).
+const PORTADAS_PROYECTO = {
+  "gestor-de-turnos": {
+    src: "/assets/proyectos/gestor-de-turnos.webp",
+    width: 1280,
+    height: 720,
+    alt: "Captura del gestor de turnos para consultorio"
+  },
+  "catalogo-mayorista": {
+    src: "/assets/proyectos/catalogo-mayorista.webp",
+    width: 1280,
+    height: 720,
+    alt: "Captura del catálogo mayorista con lista de precios"
+  },
+  "api-inventario": {
+    src: "/assets/proyectos/api-inventario.webp",
+    width: 669,
+    height: 319,
+    alt: "Captura de la API de inventario multi-sucursal"
+  },
+  "landing-estudio-arquitectura": {
+    src: "/assets/proyectos/landing-estudio-arquitectura.webp",
+    width: 439,
+    height: 328,
+    alt: "Captura de la landing para estudio de arquitectura"
+  },
+  "intranet-cooperativa": {
+    src: "/assets/proyectos/intranet-cooperativa.webp",
+    width: 677,
+    height: 319,
+    alt: "Captura de la intranet de reportes para cooperativa"
+  }
+};
 
 document.addEventListener("DOMContentLoaded", async () => {
   // 1. Inicializar componentes visuales y efectos
@@ -489,30 +523,25 @@ function urlPortada(ruta) {
 }
 
 /**
- * Portada: el respaldo va SIEMPRE como capa de fondo (iniciales sobre un
- * degradé) y la imagen real se apoya encima. Si el archivo no está en Storage
- * —hoy las rutas de `imagen_portada` apuntan a archivos que no se subieron— no
- * tapa nada y se ve el respaldo, sin depender de un `onerror`.
+ * Portada real del proyecto.
+ * Prioridad: imagen local del proyecto -> imagen de Storage -> fondo neutro.
+ * La altura la reserva el contenedor con aspect-ratio, y width/height evitan
+ * saltos de layout mientras la imagen carga.
  */
-function portadaProyecto(titulo, rutaImagen, slug, categoria) {
-  // Mockup propio en SVG: es la portada y no se pide ninguna imagen a Storage.
-  const mock = portadaMock(slug, categoria);
-  if (mock) {
-    return `<div class="project-thumb project-thumb--mock" role="img" aria-label="Vista esquemática de ${escapeHTML(titulo)}">${mock}</div>`;
+function portadaProyecto(titulo, rutaImagen, slug) {
+  const local = PORTADAS_PROYECTO[slug];
+  if (local) {
+    return `<img src="${local.src}" alt="${escapeHTML(local.alt)}" width="${local.width}" height="${local.height}"
+                class="project-thumb project-thumb--foto" loading="lazy" decoding="async" />`;
   }
 
-  const iniciales = titulo
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((p) => p.charAt(0).toUpperCase())
-    .join("");
-
-  const respaldo = `<div class="project-thumb project-thumb--placeholder" aria-hidden="true"><span>${escapeHTML(iniciales)}</span></div>`;
-
   const url = urlPortada(rutaImagen);
-  if (!url) return respaldo;
+  if (url) {
+    return `<img src="${url}" alt="Captura de ${escapeHTML(titulo)}" width="1280" height="800"
+                class="project-thumb project-thumb--foto" loading="lazy" decoding="async" />`;
+  }
 
-  return `${respaldo}<img src="${url}" alt="Portada de ${escapeHTML(titulo)}" class="project-thumb project-thumb--foto" loading="lazy" />`;
+  return `<div class="project-thumb project-thumb--placeholder" aria-hidden="true"></div>`;
 }
 
 /**
@@ -538,7 +567,7 @@ async function cargarProyectos() {
             .map((t) => `<span class="badge badge-tech">${escapeHTML(t.nombre || t)}</span>`)
             .join("");
 
-          const portada = portadaProyecto(p.titulo, p.imagen_portada, p.slug, p.categoria);
+          const portada = portadaProyecto(p.titulo, p.imagen_portada, p.slug);
 
           return `
         <div class="col-lg-6 reveal-item">

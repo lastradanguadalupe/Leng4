@@ -111,12 +111,22 @@
 }
 
 /* Tarjetas de Proyectos */
+#proyectos-grid {
+  align-items: stretch;
+}
+
+#proyectos-grid > .col-lg-6 {
+  display: flex;
+}
+
 .project-card {
   background: var(--color-surface-card);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-soft);
+  width: 100%;
+  height: 100%;
   transition: border-color var(--transition-fast), box-shadow var(--transition-normal),
     transform var(--transition-normal);
 }
@@ -130,9 +140,17 @@
 .project-thumb-wrapper {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: #F1F5F9;
+  background: var(--color-bg-muted);
+}
+
+/* Navegadores sin aspect-ratio conservan la proporción con padding */
+@supports not (aspect-ratio: 16 / 10) {
+  .project-thumb-wrapper {
+    height: 0;
+    padding-top: 62.5%;
+  }
 }
 
 .project-thumb {
@@ -142,6 +160,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top;
+  display: block;
   transition: transform var(--transition-slow);
 }
 
@@ -189,18 +209,33 @@
 }
 
 /* Tarjetas de Servicios */
+#servicios-grid {
+  align-items: stretch;
+}
+
+/* La columna también es flex para que la card ocupe toda la altura de la fila */
+#servicios-grid > .col-md-6 {
+  display: flex;
+}
+
 .service-card {
-  background: var(--color-surface-card);
+  background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-soft);
-  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-service);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+    translate var(--transition-fast);
 }
 
 .service-card:hover {
-  border-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
   box-shadow: var(--shadow-card);
-  transform: translateY(-4px);
+  /* Se usa translate para no pelear con el transform inline del tilt 3D */
+  translate: 0 -2px;
 }
 
 .service-icon {
@@ -434,25 +469,10 @@
   color: var(--color-text-dim);
 }
 
-/* Portada de respaldo cuando el proyecto no tiene imagen en Storage.
-   Va de fondo y la foto real se apoya encima: si la foto no existe, no tapa
-   nada y queda el respaldo a la vista.
-   Se conserva el look de "captura" oscura, con acento naranja. */
+/* Fondo neutro cuando el proyecto no tiene una portada disponible */
 .project-thumb--placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 0;
-  background:
-    radial-gradient(circle at 30% 25%, rgba(234, 88, 12, 0.32) 0%, rgba(234, 88, 12, 0) 60%),
-    linear-gradient(135deg, #1C1C1F 0%, #27272A 100%);
-}
-
-.project-thumb--placeholder span {
-  font-size: 2.6rem;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  color: rgba(255, 255, 255, 0.22);
+  background: var(--color-bg-muted);
 }
 
 .project-thumb--foto {
@@ -853,18 +873,4 @@
     margin: 0;
     max-width: none;
   }
-}
-
-/* Portadas dibujadas en SVG (js/data/portadas.js) */
-.project-thumb--mock {
-  z-index: 0;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(234, 88, 12, 0.34) 0%, rgba(234, 88, 12, 0) 70%),
-    linear-gradient(135deg, #1C1C1F 0%, #27272A 100%);
-}
-
-.project-thumb--mock .portada-mock {
-  display: block;
-  width: 100%;
-  height: 100%;
 }

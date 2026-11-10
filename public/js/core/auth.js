@@ -221,6 +221,13 @@ export async function signUp(email, password, fullName) {
     email: email.trim(),
     password: password,
     options: {
+      // El correo de confirmación tiene que volver al mismo sitio donde la
+      // persona se registró. Sin esto Supabase usa el "Site URL" del panel,
+      // que todavía apunta al despliegue viejo (fondo negro/violeta).
+      // Además, el dominio actual debe estar en Authentication > URL
+      // Configuration > Redirect URLs; si no, Supabase lo descarta y usa el
+      // Site URL viejo igual.
+      emailRedirectTo: window.location.origin + "/index.html",
       // Se mandan las dos claves porque el trigger de la base puede leer
       // cualquiera de las dos según cómo esté escrito.
       data: {

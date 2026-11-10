@@ -63,6 +63,11 @@
   background-color: var(--color-bg-secondary);
 }
 
+/* Servicios tiene un gris un punto más profundo para separar las cards blancas */
+#servicios {
+  background-color: var(--color-bg-muted);
+}
+
 .section-tag {
   font-size: var(--font-xs);
   text-transform: uppercase;

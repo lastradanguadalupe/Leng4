@@ -16,17 +16,15 @@
       justify-content: flex-end;
       padding: 12px;
       font-weight: bold;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--color-border);
     }
-    /* Los swatches documentan la paleta anterior: su texto sigue en blanco */
-    .color-swatch.text-white {
-      color: #ffffff !important;
-    }
-    /* El swatch translúcido queda casi blanco sobre la página clara: si el
-       texto sigue en blanco desaparece. Se usa grafito solo en ese caso. */
-    .color-swatch.text-white[style*="rgba(255,255,255,0.08)"] {
+    .color-swatch--light {
       color: var(--color-text) !important;
       border-color: var(--color-border);
+    }
+    .color-swatch--dark {
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.2);
     }
     .spec-card {
       background: var(--color-surface-card);
@@ -82,44 +80,51 @@
     <section class="spec-card mb-5">
       <h3 class="fw-bold text-accent-gradient mb-3">01. Concepto & Dirección de Arte</h3>
       <p class="text-white-50 leading-relaxed mb-3">
-        La identidad visual de nuestro portfolio se fundamenta en los pilares del diseño web contemporáneo premiado (Awwwards, Godly, Behance): <em>Dark Minimalist Tech</em>. 
+        La identidad visual de nuestro portfolio se fundamenta en los pilares del diseño web contemporáneo premiado (Awwwards, Godly, Behance): <em>Minimal Tech Light</em>. Superficies claras, retícula precisa y contraste editorial para que el contenido técnico respire.
       </p>
       <p class="text-white-50 leading-relaxed mb-0">
-        Se prioriza la sobriedad del negro absoluto (<code class="text-white">#000000</code>) como lienzo de alto contraste, contrastado con una tipografía refinada de pesos contrastantes (Raleway 300–900) y un único color acento morado pastel (<code class="text-white">#6049ea</code>) que focaliza la atención en interacciones, llamadas a la acción, líneas de tiempo y métricas analíticas.
+        El blanco (<code class="text-white">#FFFFFF</code>) y el gris (<code class="text-white">#F8FAFC</code>) construyen un lienzo limpio y luminoso; el grafito (<code class="text-white">#27272A</code>) aporta jerarquía y máxima legibilidad; el naranja (<code class="text-white">#EA580C</code>) actúa como único acento de marca en interacciones, llamadas a la acción y métricas; y el durazno (<code class="text-white">#FED7AA</code>) suaviza estados, badges y detalles secundarios. La tipografía Raleway 300–900 completa el sistema con pesos contrastantes y una presencia editorial nítida.
       </p>
     </section>
 
-    <!-- 2. PALETA DE COLORES CROMÁTICA -->
+    <!-- 2. PALETA DEFINITIVA -->
     <section class="spec-card mb-5">
-      <h3 class="fw-bold text-accent-gradient mb-4">02. Paleta de Colores (#HEX & Usos)</h3>
-      <div class="row g-4">
-        <div class="col-sm-6 col-md-3">
-          <div class="color-swatch text-white" style="background-color: #000000;">
-            <span>Fondo Primario</span>
-            <span class="small font-monospace">#000000</span>
-          </div>
-          <p class="text-white-50 small mt-2">Lienzo base para pantallas OLED. Reduce fatiga visual y confiere máxima profundidad.</p>
-        </div>
-        <div class="col-sm-6 col-md-3">
-          <div class="color-swatch text-dark" style="background-color: #ffffff;">
-            <span>Texto Principal</span>
+      <h3 class="fw-bold text-accent-gradient mb-4">02. Paleta Definitiva (#HEX & Usos)</h3>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-5 g-4">
+        <div class="col">
+          <div class="color-swatch color-swatch--light" style="background-color: #FFFFFF;">
+            <span>Blanco</span>
             <span class="small font-monospace">#FFFFFF</span>
           </div>
-          <p class="text-white-50 small mt-2">Títulos H1–H3, textos de alto impacto y micro-acentos de contraste.</p>
+          <p class="text-white-50 small mt-2">Fondo base de la página, tarjetas de proyecto y superficies de lectura.</p>
         </div>
-        <div class="col-sm-6 col-md-3">
-          <div class="color-swatch text-white" style="background-color: #6049ea;">
-            <span>Acento Pastel</span>
-            <span class="small font-monospace">#6049EA</span>
+        <div class="col">
+          <div class="color-swatch color-swatch--light" style="background-color: #F8FAFC;">
+            <span>Gris</span>
+            <span class="small font-monospace">#F8FAFC</span>
           </div>
-          <p class="text-white-50 small mt-2">Botones primarios, halos de cursor, estado de hover y gradientes.</p>
+          <p class="text-white-50 small mt-2">Secciones alternas, paneles secundarios y fondos de apoyo.</p>
         </div>
-        <div class="col-sm-6 col-md-3">
-          <div class="color-swatch text-white" style="background-color: rgba(255,255,255,0.08);">
-            <span>Superficies Glass</span>
-            <span class="small font-monospace">rgba(255,255,255,.08)</span>
+        <div class="col">
+          <div class="color-swatch color-swatch--dark" style="background-color: #27272A;">
+            <span>Grafito</span>
+            <span class="small font-monospace">#27272A</span>
           </div>
-          <p class="text-white-50 small mt-2">Tarjetas de proyectos, bordes de 1px y paneles con backdrop-filter blur.</p>
+          <p class="text-white-50 small mt-2">Texto principal, títulos, iconografía y bordes de alto contraste.</p>
+        </div>
+        <div class="col">
+          <div class="color-swatch color-swatch--dark" style="background-color: #EA580C;">
+            <span>Naranja</span>
+            <span class="small font-monospace">#EA580C</span>
+          </div>
+          <p class="text-white-50 small mt-2">Acento de marca: botones, enlaces, foco, hover, métricas y llamadas a la acción.</p>
+        </div>
+        <div class="col">
+          <div class="color-swatch color-swatch--light" style="background-color: #FED7AA;">
+            <span>Durazno</span>
+            <span class="small font-monospace">#FED7AA</span>
+          </div>
+          <p class="text-white-50 small mt-2">Estados suaves, badges, fondos de énfasis y detalles secundarios.</p>
         </div>
       </div>
     </section>
@@ -127,7 +132,7 @@
     <!-- 3. SISTEMA TIPOGRÁFICO -->
     <section class="spec-card mb-5">
       <h3 class="fw-bold text-accent-gradient mb-4">03. Tipografía & Jerarquía Visual</h3>
-      <div class="mb-4 p-3 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);">
+      <div class="mb-4 p-3 rounded" style="background: var(--color-bg-secondary); border: 1px solid var(--color-border);">
         <span class="text-white-50 small">Familia Tipográfica Principal:</span>
         <h4 class="fw-bold mb-0 text-white">Raleway (Google Fonts) · Pesos 300, 400, 500, 600, 700, 800, 900</h4>
       </div>
@@ -190,13 +195,13 @@
             <button class="btn btn-outline-custom">Botón Outline</button>
             <button class="btn btn-locked-custom">🔒 Bloqueado (Gate)</button>
           </div>
-          <small class="text-white-50">Los botones incorporan físicas magnéticas que siguen levemente el cursor del usuario y micro-halo violeta en focus/hover.</small>
+          <small class="text-white-50">Los botones incorporan físicas magnéticas que siguen levemente el cursor del usuario y micro-halo naranja en focus/hover.</small>
         </div>
 
         <div class="col-md-6">
           <h5 class="fw-bold text-white mb-3">Campos de Entrada (Inputs)</h5>
           <input type="text" class="form-control mb-2" value="lastradanguadalupe@gmail.com" readonly>
-          <small class="text-white-50">Fondo translúcido al 3%, borde atenuado y foco brillante con anillo morado pastel (#6049ea).</small>
+          <small class="text-white-50">Fondo gris claro (#F8FAFC), borde sutil (#E5E7EB) y foco brillante con anillo naranja (#EA580C).</small>
         </div>
       </div>
     </section>
